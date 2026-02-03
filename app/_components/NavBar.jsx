@@ -1,23 +1,33 @@
-import { ChevronDown, Heart, ShoppingCart, Search } from 'lucide-react';
+"use client";
+import { ChevronDown, Menu, X, GraduationCap, User, Facebook, Twitter, Instagram, Linkedin, Youtube } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function NavBar() {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     const navItems = [
-        { name: 'Home', hasDropdown: true },
-        { name: 'Pages', hasDropdown: true },
-        { name: 'Shop', hasDropdown: true },
-        { name: 'Course', hasDropdown: true },
-        { name: 'Blog', hasDropdown: true },
-        { name: 'Contact', hasDropdown: false },
+        { name: 'Home', href: '/' },
+        { name: 'About Us', href: '/about' },
+        { name: 'Course', href: '/course' },
+        { name: 'Who We Are', href: '/who-we-are' },
+        { name: 'Contact Us', href: '/contact' },
+    ];
+
+    const socialLinks = [
+        { icon: Facebook, href: '#' },
+        { icon: Twitter, href: '#' },
+        { icon: Instagram, href: '#' },
+        { icon: Linkedin, href: '#' },
+        { icon: Youtube, href: '#' },
     ];
 
     return (
         <div className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
-            <div className="max-w-7xl  mx-auto px-4 py-4 flex justify-between items-center">
+            <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                    <div className='p-2 bg-teal-50 rounded-lg'>
-
+                <Link href="/" className="flex items-center gap-2 relative z-50" onClick={() => setIsMobileMenuOpen(false)}>
+                    <div className='p-2 bg-sSecondary/10 rounded-lg'>
                         <svg
                             width="24"
                             height="24"
@@ -40,36 +50,165 @@ export default function NavBar() {
                     {navItems.map((item) => (
                         <Link
                             key={item.name}
-                            href="#"
+                            href={item.href}
                             className="flex items-center gap-1 font-medium text-slate-600 hover:text-sSecondary transition-colors"
                         >
                             {item.name}
-                            {item.hasDropdown && <ChevronDown size={14} />}
                         </Link>
                     ))}
                 </nav>
 
                 {/* Right Actions */}
                 <div className="flex items-center gap-4">
-                    <button className="relative w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-slate-600 hover:bg-teal-50 hover:text-sSecondary transition-all">
-                        <Heart size={20} />
-                        <span className="absolute -top-1 -right-1 bg-sSecondary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
-                    </button>
-
-                    <button className="relative w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-slate-600 hover:bg-teal-50 hover:text-sSecondary transition-all">
-                        <ShoppingCart size={20} />
-                        <span className="absolute -top-1 -right-1 bg-sSecondary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
-                    </button>
-
                     <Link
-                        href="#"
-                        className="hidden md:flex bg-sSecondary hover:bg-cyan-600 text-white px-6 py-2.5 rounded-full font-medium items-center gap-2 transition-colors"
+                        href="/login"
+                        className="hidden md:flex bg-sSecondary hover:bg-sSecondary/90 text-white px-6 py-2.5 rounded-full font-medium items-center gap-2 transition-colors"
                     >
-                        Start Free Trail
+                        Login
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
                     </Link>
+
+                    {/* Mobile Menu Button */}
+                    <button
+                        className="lg:hidden p-2 text-slate-600 hover:text-sSecondary transition-colors"
+                        onClick={() => setIsMobileMenuOpen(true)}
+                    >
+                        <Menu size={24} />
+                    </button>
+                </div>
+            </div>
+
+            {/* Mobile Sidebar Overlay */}
+            {isMobileMenuOpen && (
+                <div
+                    className="fixed inset-0 bg-sPrimary/60 z-60 backdrop-blur-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
+            {/* Mobile Sidebar */}
+            <div className={`fixed inset-y-0 left-0 w-[320px] bg-white z-70 shadow-2xl transform transition-transform duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="h-full flex flex-col">
+                    {/* Sidebar Header with decorative element */}
+                    <div className="relative bg-sPrimary p-6 pb-8">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16"></div>
+                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -ml-12 -mb-12"></div>
+
+                        <div className="relative flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <div className='p-2 bg-white/10 backdrop-blur-sm rounded-lg'>
+                                    <svg
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        className="text-sSecondary"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                                    </svg>
+                                </div>
+                                <span className="text-xl font-bold text-white">Menu</span>
+                            </div>
+                            <button
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Sidebar Links - Scrollable section */}
+                    <nav className="flex-1 px-6 py-6 space-y-2 overflow-y-auto">
+                        {navItems.map((item, index) => (
+                            <Link
+                                key={item.name}
+                                href={item.href}
+                                className="flex items-center gap-3 text-base font-medium text-slate-700 hover:text-sPrimary hover:bg-sSecondary/10 px-4 py-3 rounded-xl transition-all group"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                style={{ animationDelay: `${index * 50}ms` }}
+                            >
+                                <div className="w-1.5 h-1.5 rounded-full bg-sSecondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                {item.name}
+                            </Link>
+                        ))}
+                    </nav>
+
+                    {/* Login Sections - Fixed at bottom */}
+                    <div className="px-6 py-6 border-t border-gray-100 bg-white space-y-3">
+                        {/* Teacher Login */}
+                        <Link
+                            href="/teacher/login"
+                            className="flex w-full bg-white border-2 border-sPrimary text-sPrimary hover:bg-sPrimary hover:text-white px-5 py-3.5 rounded-xl font-bold items-center justify-between transition-all shadow-sm group"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <span className="flex items-center gap-3">
+                                <GraduationCap size={20} />
+                                Teacher Login
+                            </span>
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="group-hover:translate-x-1 transition-transform"
+                            >
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </Link>
+
+                        {/* Student Login */}
+                        <Link
+                            href="/student/login"
+                            className="flex w-full bg-sSecondary hover:bg-sSecondary/90 text-white px-5 py-3.5 rounded-xl font-bold items-center justify-between transition-all shadow-md group"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <span className="flex items-center gap-3">
+                                <User size={20} />
+                                Student Login
+                            </span>
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="group-hover:translate-x-1 transition-transform"
+                            >
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </Link>
+
+                        {/* Social Media Icons */}
+                        <div className="pt-4 border-t border-gray-100">
+                            <p className="text-xs text-slate-400 mb-3 text-center font-medium uppercase tracking-wider">Connect With Us</p>
+                            <div className="flex justify-center gap-3">
+                                {socialLinks.map((social, index) => (
+                                    <Link
+                                        key={index}
+                                        href={social.href}
+                                        className="p-2.5 bg-slate-50 hover:bg-sSecondary/10 text-slate-400 hover:text-sSecondary rounded-lg transition-all"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <social.icon size={18} />
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

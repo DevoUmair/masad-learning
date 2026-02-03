@@ -1,20 +1,22 @@
 import { Search, MonitorPlay, User, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import SectionBadge from '../../components/custom/SectionBadge';
 
 export default function Banner() {
     return (
         <div className="bg-[#f0f9ff] relative overflow-hidden">
             {/* Background decorative elements could go here */}
-            <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-cyan-50 to-transparent -skew-x-12 transform -translate-x-20 opacity-50 pointer-events-none"></div>
+            <div className="absolute top-0 left-0 w-1/2 h-full bg-linear-to-r from-cyan-50 to-transparent -skew-x-12 transform -translate-x-20 opacity-50 pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto px-4 pt-16 pb-24 grid md:grid-cols-2 gap-12 items-center relative z-10">
                 {/* Left Content */}
                 <div>
                     {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm mb-6">
-                        <span className="bg-teal-100 text-sSecondary p-1 rounded-full"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg></span>
-                        <span className="text-sPrimary font-semibold text-sm tracking-wide">Welcome to Masad Learning</span>
-                    </div>
+                    <SectionBadge
+                        icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>}
+                        text="Welcome to Masad Learning"
+                        variant="white"
+                    />
 
                     {/* Heading */}
                     <h1 className="text-5xl md:text-7xl font-bold text-sPrimary leading-[1.1] mb-8">
@@ -67,12 +69,12 @@ export default function Banner() {
                 {/* Right Image Area */}
                 <div className="relative">
                     {/* Main Image Placeholder */}
-                    {/* In a real app, use next/image with a real path. Using a placeholder div for now or a generic placeholder URL if acceptable, but instructions say generate_image or use existing. I will use a colored placeholder for structure as I don't have the image file yet. */}
-                    <div className="relative z-10">
-                        <img
-                            src="https://images.unsplash.com/photo-1665686376173-ada7a0031a85?q=80&w=2670&auto=format&fit=crop"
+                    <div className="relative z-10 w-full h-[500px]">
+                        <Image
+                            src="https://www.shutterstock.com/image-photo/multiethnic-group-muslim-girls-wearing-600nw-2453408567.jpg"
                             alt="Arabic student learning"
-                            className="rounded-3xl shadow-2xl w-full object-cover h-[500px]"
+                            fill
+                            className="rounded-3xl shadow-2xl object-cover"
                         />
 
                         {/* Floating Badge 1 - Top Left */}
@@ -91,9 +93,9 @@ export default function Banner() {
                             <div className='mb-2 font-bold text-sPrimary'>Instructor</div>
                             <div className="flex items-center gap-3">
                                 <div className="flex -space-x-3">
-                                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop" className="w-8 h-8 rounded-full border-2 border-white object-cover" alt="Instructor 1" />
-                                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop" className="w-8 h-8 rounded-full border-2 border-white object-cover" alt="Instructor 2" />
-                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" className="w-8 h-8 rounded-full border-2 border-white object-cover" alt="Instructor 3" />
+                                    <Image src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop" width={32} height={32} className="rounded-full border-2 border-white object-cover" alt="Instructor 1" />
+                                    <Image src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop" width={32} height={32} className="rounded-full border-2 border-white object-cover" alt="Instructor 2" />
+                                    <Image src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" width={32} height={32} className="rounded-full border-2 border-white object-cover" alt="Instructor 3" />
                                     <div className="w-8 h-8 rounded-full bg-sSecondary border-2 border-white flex items-center justify-center text-white text-[10px] show">+</div>
                                 </div>
                                 <div className='text-xs font-bold text-slate-600'>200+ <br /><span className='font-normal text-slate-400'>Instructor</span></div>

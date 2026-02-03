@@ -23,13 +23,6 @@ export default function TopBar() {
 
                 {/* Right Section: Login & Socials */}
                 <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-2 hover:text-sSecondary transition-colors cursor-pointer">
-                        <Link href="/login" className='flex items-center gap-2'>
-                            <User size={14} className="text-sSecondary" />
-                            <span>/ Register</span>
-                        </Link>
-                    </div>
-
                     <div className="flex items-center gap-3 pl-6 border-l border-gray-600">
                         <span className="mr-2">Follow us:</span>
                         <Link href="#" className="hover:text-sSecondary transition-colors"><Facebook size={14} /></Link>
