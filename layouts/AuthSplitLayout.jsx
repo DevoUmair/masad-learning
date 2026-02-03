@@ -1,11 +1,14 @@
+'use client'
 import React from 'react';
 import { Building2, ShieldCheck, Globe } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function AuthSplitLayout({ children, title, description, bgImage, userType = "student" }) {
+    const router = useRouter();
     return (
-        <div className="flex min-h-screen w-full bg-white">
+        <div className="flex w-full bg-white">
             {/* Left Side - Branding Area with Image */}
             <div className="hidden lg:flex flex-col justify-between w-[45%] bg-sPrimary relative overflow-hidden p-12 text-white">
 
@@ -26,14 +29,13 @@ export default function AuthSplitLayout({ children, title, description, bgImage,
                 )}
 
                 {/* Logo / Icon */}
-                <div className="relative z-10">
-                    <div className="mb-8">
-                        <Building2 size={64} className="text-white bg-white/10 p-2 rounded-lg backdrop-blur-sm" />
-                    </div>
+                <div className="relative z-10 cursor-pointer -ml-6" onClick={() => router.push("/")}>
+                    <Image src="/logo/logo2.png" alt="Logo" width={150} height={150} />
                 </div>
 
                 {/* Main Text content */}
                 <div className="relative z-10 mt-auto mb-20 max-w-md">
+
                     <h1 className="text-4xl xl:text-5xl font-bold mb-6 leading-tight drop-shadow-md">
                         {title || "Empowering UAE's Future Leaders"}
                     </h1>

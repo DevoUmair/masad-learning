@@ -1,6 +1,7 @@
 "use client";
 import { ChevronDown, Menu, X, GraduationCap, User, Facebook, Twitter, Instagram, Linkedin, Youtube } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 
 export default function NavBar() {
@@ -26,23 +27,18 @@ export default function NavBar() {
         <div className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2 relative z-50" onClick={() => setIsMobileMenuOpen(false)}>
-                    <div className='p-2 bg-sSecondary/10 rounded-lg'>
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            className="text-sSecondary"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                        </svg>
+                <Link href="/" className="flex items-center relative z-50" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Image
+                        src='/logo/logo2.png'
+                        alt='logo'
+                        width={120}
+                        height={120}
+                    />
+                    <div className='flex flex-col justify-center'>
+                        <p className="text-xl font-bold text-slate-800 -ml-6 leading-none">Masad</p>
+                        <p className='text-xs text-slate-600 -ml-5 leading-tight'>Learning</p>
                     </div>
-                    <span className="text-2xl font-bold text-slate-800">Mazad Learning</span>
+
                 </Link>
 
                 {/* Navigation - Hidden on mobile */}
