@@ -9,9 +9,9 @@ export default function NavBar() {
 
     const navItems = [
         { name: 'Home', href: '/' },
+        { name: 'Courses', href: '/courses' },
         { name: 'About Us', href: '/about' },
-        { name: 'Course', href: '/course' },
-        { name: 'Who We Are', href: '/who-we-are' },
+        // { name: 'Who We Are', href: '/who-we-are' },
         { name: 'Contact Us', href: '/contact' },
     ];
 
@@ -36,7 +36,7 @@ export default function NavBar() {
                     />
                     <div className='flex flex-col justify-center'>
                         <p className="text-xl font-bold text-slate-800 -ml-6 leading-none">Masad</p>
-                        <p className='text-xs text-slate-600 -ml-5 leading-tight'>Learning</p>
+                        <p className='text-xs text-sSecondary -ml-5 leading-tight'>Learning</p>
                     </div>
 
                 </Link>
@@ -68,7 +68,7 @@ export default function NavBar() {
 
                     {/* Mobile Menu Button */}
                     <button
-                        className="lg:hidden p-2 text-slate-600 hover:text-sSecondary transition-colors"
+                        className="lg:hidden p-2 text-slate-600 hover:text-sSecondary transition-colors cursor-pointer"
                         onClick={() => setIsMobileMenuOpen(true)}
                     >
                         <Menu size={24} />

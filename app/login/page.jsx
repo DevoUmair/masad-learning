@@ -1,8 +1,43 @@
+'use client'
 import AuthSplitLayout from '@/layouts/AuthSplitLayout';
 import Link from 'next/link';
 import { Mail, Lock, Building, Key } from 'lucide-react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
+    const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const credentials = [{
+        email: "student@mail.com",
+        password: "123456",
+        type: 'student'
+    },
+    {
+        email: "instructor@mail.com",
+        password: "123456",
+        type: 'instructor'
+    },
+    {
+        email: "admin@mail.com",
+        password: "123456",
+        type: 'admin'
+    }
+    ]
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (email === credentials[0].email && password === credentials[0].password) {
+            router.push('/dashboard/student')
+        }
+        else if (email === credentials[1].email && password === credentials[1].password) {
+            router.push('/dashboard/instructor')
+        }
+        else if (email === credentials[2].email && password === credentials[2].password) {
+            router.push('/dashboard/admin')
+        }
+    }
     return (
         <AuthSplitLayout
             title="Empowering UAE's Future Leaders"
@@ -25,6 +60,8 @@ export default function Login() {
                                 id="email"
                                 className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                 placeholder="name@organization.ae"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
                     </div>
@@ -40,6 +77,8 @@ export default function Login() {
                                 id="password"
                                 className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                 placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                             />
                             <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
                                 {/* Eye icon would go here for toggle */}
@@ -56,6 +95,7 @@ export default function Login() {
                     <button
                         type="submit"
                         className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-sSecondary hover:bg-sSecondary/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sSecondary transition-colors"
+                        onClick={handleSubmit}
                     >
                         Sign In
                     </button>

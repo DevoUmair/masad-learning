@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Facebook, Twitter, Instagram, Youtube, ArrowRight, MapPin, Phone, Mail, Clock, ArrowUp } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Footer() {
     return (
@@ -13,9 +14,11 @@ export default function Footer() {
                         <div className="relative z-10">
                             <span className="text-sSecondary font-bold text-sm tracking-widest uppercase mb-2 block">Become Student</span>
                             <h3 className="text-3xl font-bold text-sPrimary mb-6 leading-tight">Get The Best Courses & <br /> Upgrade Your Skills</h3>
-                            <button className="bg-sSecondary text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-cyan-600 transition-colors">
-                                Become A Student <ArrowRight size={18} />
-                            </button>
+                            <Link href="/register/student">
+                                <button className="bg-sSecondary cursor-pointer text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-cyan-600 transition-colors">
+                                    Become A Student <ArrowRight size={18} />
+                                </button>
+                            </Link>
                         </div>
                         <div className="relative z-10">
                             <div className="relative z-10">
@@ -37,9 +40,11 @@ export default function Footer() {
                         <div className="relative z-10">
                             <span className="text-sSecondary font-bold text-sm tracking-widest uppercase mb-2 block">Become Instructor</span>
                             <h3 className="text-3xl font-bold text-sPrimary mb-6 leading-tight">Get The Best Courses & <br /> Upgrade Your Skills</h3>
-                            <button className="bg-sSecondary text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-cyan-600 transition-colors">
-                                Become A Teacher <ArrowRight size={18} />
-                            </button>
+                            <Link href="/register/instructor">
+                                <button className="bg-sSecondary cursor-pointer text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-cyan-600 transition-colors">
+                                    Become A Teacher <ArrowRight size={18} />
+                                </button>
+                            </Link>
                         </div>
                         <div className="relative z-10">
                             <div className="relative z-10">
@@ -65,11 +70,18 @@ export default function Footer() {
                         {/* Column 1: Brand */}
                         <div className="space-y-6">
                             <div className="flex items-center gap-2">
-                                <div className="p-2 bg-sSecondary/10 rounded-lg">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-sSecondary" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+                                <Image
+                                    src='/logo/logo2.png'
+                                    alt='logo'
+                                    width={120}
+                                    height={120}
+                                />
+                                <div className='flex flex-col justify-center'>
+                                    <p className="text-xl font-bold text-white -ml-6 leading-none">Masad</p>
+                                    <p className='text-xs text-sSecondary -ml-5 leading-tight'>Learning</p>
                                 </div>
-                                <span className="text-2xl font-bold text-white">EdCare</span>
                             </div>
+
                             <p className="text-gray-400 leading-relaxed text-sm">
                                 Globally deploy synergistic opportunities after state of techno create information without iterate impactful internal.
                             </p>
@@ -142,7 +154,7 @@ export default function Footer() {
                 {/* Bottom Bar */}
                 <div className="bg-sSecondary text-white py-6">
                     <div className="max-w-7xl mx-auto px-4 flex justify-center items-center gap-4">
-                        <p className="text-sm font-medium w-full text-center">Copyright © 2025 EdCare. All Rights Reserved.</p>
+                        <p className="text-sm font-medium w-full text-center">Copyright © 2025 Masad Learning. All Rights Reserved.</p>
                     </div>
                 </div>
             </footer>
