@@ -8,13 +8,15 @@ import OfferBanner from "./_components/OfferBanner";
 import Footer from "./_components/Footer";
 import WelcomeMasad from "./_components/WelcomeMasad";
 import WhoWe from "./_components/WhoWe";
+import HeroBanner from "./_components/Banner";
 
 export default function Home() {
   return (
     <div>
       <TopBar />
       <NavBar />
-      <Banner />
+      {/* <Banner /> */}
+      <HeroBanner />
       <AboutUs />
       <WelcomeMasad />
       {/* <FeaturedCourse /> */}

@@ -20,7 +20,7 @@ export default function SettingsForm() {
                 </div>
             </div>
 
-            <div className="pt-6 border-t border-slate-100 space-y-4">
+            {/* <div className="pt-6 border-t border-slate-100 space-y-4">
                 <h3 className="font-bold text-lg text-slate-900">Visibility</h3>
                 <div className="flex items-center gap-3 p-4 border border-slate-200 rounded-xl cursor-pointer hover:border-sPrimary transition-colors">
                     <div className="size-4 rounded-full border border-sPrimary bg-sPrimary" />
@@ -36,7 +36,7 @@ export default function SettingsForm() {
                         <p className="text-xs text-slate-500">Only visible to you. Not available for purchase.</p>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <div className="pt-6 border-t border-slate-100">
                 <h3 className="font-bold text-lg text-red-600 mb-2">Danger Zone</h3>
