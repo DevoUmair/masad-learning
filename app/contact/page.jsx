@@ -1,4 +1,4 @@
-"use client";
+
 import NavBar from "@/app/_components/NavBar";
 import TopBar from "@/app/_components/TopBar";
 import Footer from "@/app/_components/Footer";
@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import SubBanner from "@/app/_components/SubBanner";
 
 export default function ContactPage() {
     return (
@@ -14,12 +15,7 @@ export default function ContactPage() {
             <NavBar />
 
             {/* Hero / Header */}
-            <div className="bg-sPrimary py-16 text-center text-white">
-                <h1 className="text-4xl font-black mb-4">Contact Us</h1>
-                <p className="text-blue-100 text-lg max-w-2xl mx-auto px-4">
-                    Have questions? We're here to help. Reach out to us regarding courses, partnerships, or any other inquiries.
-                </p>
-            </div>
+            <SubBanner title="Contact Us" description="Have questions? We're here to help. Reach out to us regarding courses, partnerships, or any other inquiries." />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">

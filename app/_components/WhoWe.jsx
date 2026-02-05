@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { ChevronDown, ChevronUp, Zap } from 'lucide-react';
-import SectionBadge from '../../components/custom/SectionBadge';
+import SectionBadge from '@/components/custom/SectionBadge';
 
 export default function WhoWe() {
     const [openIndex, setOpenIndex] = useState(0);

@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Award, Users, BookOpen, Clock, CheckCircle } from 'lucide-react';
-import SectionBadge from '../../components/custom/SectionBadge';
+import SectionBadge from '@/components/custom/SectionBadge';
 
 export default function AboutUs() {
     const features = [
