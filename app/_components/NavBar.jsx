@@ -4,8 +4,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 
+import { usePathname } from 'next/navigation';
+
 export default function NavBar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const pathname = usePathname();
 
     const navItems = [
         { name: 'Home', href: '/' },
@@ -47,7 +50,8 @@ export default function NavBar() {
                         <Link
                             key={item.name}
                             href={item.href}
-                            className="flex items-center gap-1 font-medium text-slate-600 hover:text-sSecondary transition-colors"
+                            className={`flex items-center gap-1 font-medium transition-colors ${pathname === item.href ? 'text-sSecondary' : 'text-slate-600 hover:text-sSecondary'
+                                }`}
                         >
                             {item.name}
                         </Link>
@@ -94,22 +98,11 @@ export default function NavBar() {
 
                         <div className="relative flex justify-between items-center">
                             <div className="flex items-center gap-3">
-                                <div className='p-2 bg-white/10 backdrop-blur-sm rounded-lg'>
-                                    <svg
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        className="text-sSecondary"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                                    </svg>
+                                <Image src='/logo/logo2.png' alt='logo' width={120} height={120} />
+                                <div className='flex flex-col justify-center'>
+                                    <p className="text-xl font-bold text-white -ml-6 leading-none">Masad</p>
+                                    <p className='text-xs text-sSecondary -ml-5 leading-tight'>Learning</p>
                                 </div>
-                                <span className="text-xl font-bold text-white">Menu</span>
                             </div>
                             <button
                                 onClick={() => setIsMobileMenuOpen(false)}
@@ -122,31 +115,38 @@ export default function NavBar() {
 
                     {/* Sidebar Links - Scrollable section */}
                     <nav className="flex-1 px-6 py-6 space-y-2 overflow-y-auto">
-                        {navItems.map((item, index) => (
-                            <Link
-                                key={item.name}
-                                href={item.href}
-                                className="flex items-center gap-3 text-base font-medium text-slate-700 hover:text-sPrimary hover:bg-sSecondary/10 px-4 py-3 rounded-xl transition-all group"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                style={{ animationDelay: `${index * 50}ms` }}
-                            >
-                                <div className="w-1.5 h-1.5 rounded-full bg-sSecondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                {item.name}
-                            </Link>
-                        ))}
+                        {navItems.map((item, index) => {
+                            const isActive = pathname === item.href;
+                            return (
+                                <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className={`flex items-center gap-3 text-base font-medium px-4 py-3 rounded-xl transition-all group ${isActive
+                                        ? 'text-sPrimary bg-sSecondary/10'
+                                        : 'text-slate-700 hover:text-sPrimary hover:bg-sSecondary/10'
+                                        }`}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    style={{ animationDelay: `${index * 50}ms` }}
+                                >
+                                    <div className={`w-1.5 h-1.5 rounded-full bg-sSecondary transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                                        }`}></div>
+                                    {item.name}
+                                </Link>
+                            );
+                        })}
                     </nav>
 
                     {/* Login Sections - Fixed at bottom */}
                     <div className="px-6 py-6 border-t border-gray-100 bg-white space-y-3">
                         {/* Teacher Login */}
                         <Link
-                            href="/teacher/login"
+                            href="/register/instructor"
                             className="flex w-full bg-white border-2 border-sPrimary text-sPrimary hover:bg-sPrimary hover:text-white px-5 py-3.5 rounded-xl font-bold items-center justify-between transition-all shadow-sm group"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             <span className="flex items-center gap-3">
                                 <GraduationCap size={20} />
-                                Teacher Login
+                                Instructor Register
                             </span>
                             <svg
                                 width="16"
@@ -165,13 +165,13 @@ export default function NavBar() {
 
                         {/* Student Login */}
                         <Link
-                            href="/student/login"
+                            href="/register/student"
                             className="flex w-full bg-sSecondary hover:bg-sSecondary/90 text-white px-5 py-3.5 rounded-xl font-bold items-center justify-between transition-all shadow-md group"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             <span className="flex items-center gap-3">
                                 <User size={20} />
-                                Student Login
+                                Student Register
                             </span>
                             <svg
                                 width="16"

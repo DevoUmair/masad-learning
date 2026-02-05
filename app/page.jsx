@@ -17,7 +17,7 @@ export default function Home() {
       <Banner />
       <AboutUs />
       <WelcomeMasad />
-      <FeaturedCourse />
+      {/* <FeaturedCourse /> */}
       <WhoWe />
       {/* <WhyChooseUs /> */}
       <OfferBanner />

@@ -78,7 +78,7 @@ export default function WhoWe() {
                 {/* Right Column: Content */}
                 <div>
                     {/* Badge */}
-                    <SectionBadge icon={<Zap size={12} fill="currentColor" />} text="Our Course Categories" />
+                    <SectionBadge icon={<Zap size={12} fill="currentColor" />} text="Our Platform" />
 
                     {/* Heading */}
                     <h2 className="text-4xl md:text-5xl font-bold text-sPrimary mb-10 leading-tight">

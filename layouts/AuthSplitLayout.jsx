@@ -34,7 +34,7 @@ export default function AuthSplitLayout({ children, title, description, bgImage,
                 </div>
 
                 {/* Main Text content */}
-                <div className="relative z-10 mt-auto mb-20 max-w-md">
+                <div className="relative z-10 my-auto max-w-md">
 
                     <h1 className="text-4xl xl:text-5xl font-bold mb-6 leading-tight drop-shadow-md">
                         {title || "Empowering UAE's Future Leaders"}
