@@ -1,9 +1,23 @@
-import React from 'react'
+"use client";
+import React from 'react';
+import AdminHeader from './_components/AdminHeader';
+import AdminStatsGrid from './_components/AdminStatsGrid';
+import AdminRevenueSection from './_components/AdminRevenueSection';
+import AdminRecentActivity from './_components/AdminRecentActivity';
 
-const Admin = () => {
+export default function AdminDashboard() {
     return (
-        <div>Admin</div>
-    )
-}
+        <div className="p-8 space-y-8 font-lexend max-w-7xl mx-auto">
 
-export default Admin
+            <AdminHeader />
+
+            <AdminStatsGrid />
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <AdminRevenueSection />
+                <AdminRecentActivity />
+            </div>
+
+        </div>
+    );
+}
