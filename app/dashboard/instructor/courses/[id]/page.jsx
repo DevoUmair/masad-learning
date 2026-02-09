@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import { ArrowLeft, Save, Layout, List, Settings } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
@@ -9,6 +9,7 @@ import CurriculumEditor from './_components/CurriculumEditor';
 import SettingsForm from './_components/SettingsForm';
 
 export default function CourseEditorPage({ params }) {
+    const { id } = use(params);
     const [activeTab, setActiveTab] = useState('basic');
 
     return (
@@ -21,10 +22,10 @@ export default function CourseEditorPage({ params }) {
                     </Link>
                     <div>
                         <h1 className="text-2xl font-black text-slate-900">
-                            {params.id === 'new' ? 'Create New Course' : 'Edit Course'}
+                            {id === 'new' ? 'Create New Course' : 'Edit Course'}
                         </h1>
                         <p className="text-slate-500 text-sm mt-1">
-                            {params.id === 'new' ? 'Start building your new curriculum' : 'Update your course content and details'}
+                            {id === 'new' ? 'Start building your new curriculum' : 'Update your course content and details'}
                         </p>
                     </div>
                 </div>

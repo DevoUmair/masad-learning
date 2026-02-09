@@ -6,10 +6,12 @@ import { LayoutDashboard, Users, ShieldCheck, Banknote, BarChart3 } from "lucide
 export default function AdminLayout({ children }) {
     const navItems = [
         { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard/admin" },
-        { icon: Users, label: "User Management", href: "/dashboard/admin/users" },
-        { icon: ShieldCheck, label: "Course Moderation", href: "/dashboard/admin/courses" },
+        { icon: Users, label: "Instructor Management", href: "/dashboard/admin/instructor" },
+        { icon: Users, label: "Student Management", href: "/dashboard/admin/student" },
+        { icon: ShieldCheck, label: "Course Management", href: "/dashboard/admin/courses" },
         { icon: Banknote, label: "Payments & Billing", href: "/dashboard/admin/billing" },
     ];
+
     return (
         <div className="flex h-screen overflow-hidden bg-backgroundLight dark:bg-backgroundDark ">
             <Sidebar navItems={navItems} className="hidden md:flex" />
