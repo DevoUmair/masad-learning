@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function CertificateDetail({ params }) {
-    // In a real app, fetch cert details using params.id
+    // In a real app, fetch cert details using params?.id
     const certDetails = {
         title: "Advanced Strategic Leadership",
         issueDate: "14 May 2024",

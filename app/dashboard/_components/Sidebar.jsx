@@ -25,7 +25,23 @@ export function Sidebar({ className, navItems = [] }) {
 
                 <nav className="flex flex-col gap-2">
                     {navItems.map((item) => {
-                        const isActive = pathname === item.href;
+                        const cleanPath = pathname.split("?")[0].replace(/\/$/, "");
+
+                        // break into segments
+                        const segments = cleanPath.split("/").filter(Boolean);
+
+                        // Example:
+                        // /dashboard/instructor/courses/new
+                        // ["dashboard", "instructor", "courses", "new"]
+
+                        const activeSegment = segments[2]; // after instructor
+
+                        const itemSegment = item.href
+                            .split("/")
+                            .filter(Boolean)[2];
+
+                        const isActive = activeSegment === itemSegment;
+
                         return (
                             <Link
                                 key={item.label}
@@ -44,6 +60,8 @@ export function Sidebar({ className, navItems = [] }) {
                         );
                     })}
                 </nav>
+
+
             </div>
 
             <div className="px-6 flex flex-col gap-2">
