@@ -1,15 +1,18 @@
+'use client';
 import { TrendingUp, Trophy, Clock, Award, CheckCircle, PlayCircle, Zap } from "lucide-react";
 import { ActiveCourseCard } from "./_components/ActiveCourse";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 export default function StudentDashboard() {
+    const { user } = useSelector((state) => state.auth);
     return (
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-                        Welcome back, Ahmed! 👋
+                        Welcome back, {user.name}! 👋
                     </h2>
                     <p className="text-sSecondary mt-1">You have 2 courses in progress.</p>
                 </div>

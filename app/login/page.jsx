@@ -5,38 +5,37 @@ import { Mail, Lock, Building, Key } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NavBar from '../_components/NavBar';
+import { useLoginMutation } from '@/redux/auth/AuthApi';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '@/redux/auth/AuthSlice';
 
 export default function Login() {
     const router = useRouter();
+    const [loginUser] = useLoginMutation();
+    const dispatch = useDispatch();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const credentials = [{
-        email: "student@mail.com",
-        password: "123456",
-        type: 'student'
-    },
-    {
-        email: "instructor@mail.com",
-        password: "123456",
-        type: 'instructor'
-    },
-    {
-        email: "admin@mail.com",
-        password: "123456",
-        type: 'admin'
-    }
-    ]
+    const [error, setError] = useState(null);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (email === credentials[0].email && password === credentials[0].password) {
-            router.push('/dashboard/student')
-        }
-        else if (email === credentials[1].email && password === credentials[1].password) {
-            router.push('/dashboard/instructor')
-        }
-        else if (email === credentials[2].email && password === credentials[2].password) {
-            router.push('/dashboard/admin')
+        setError(null);
+        try {
+            const data = await loginUser({ email, password }).unwrap();
+            dispatch(setCredentials({ user: data.user, accessToken: data.accessToken }));
+
+            const role = data.user.role;
+            if (role === 'student') {
+                router.push('/dashboard/student');
+            } else if (role === 'instructor') {
+                router.push('/dashboard/instructor');
+            } else if (role === 'admin') {
+                router.push('/dashboard/admin');
+            } else {
+                router.push('/');
+            }
+        } catch (err) {
+            setError(err.data?.message || 'Login failed');
         }
     }
     return (
@@ -50,6 +49,12 @@ export default function Login() {
                 <div className="w-full">
                     <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Welcome Back</h2>
                     <p className="text-gray-500 mb-8">Please enter your credentials to access your dashboard.</p>
+
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+                            {error}
+                        </div>
+                    )}
 
                     <form className="space-y-6">
                         <div>

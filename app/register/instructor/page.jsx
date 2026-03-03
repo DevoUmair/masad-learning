@@ -1,10 +1,60 @@
+'use client';
+
 import AuthSplitLayout from '@/layouts/AuthSplitLayout';
 import RegisterTabs from '@/components/custom/RegisterTabs';
 import Link from 'next/link';
 import { Mail, Lock, User, Briefcase, FileText } from 'lucide-react';
 import NavBar from '@/app/_components/NavBar';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useRegisterMutation } from '@/redux/auth/AuthApi';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '@/redux/auth/AuthSlice';
 
 export default function TeacherRegisterPage() {
+    const router = useRouter();
+    const [registerUser] = useRegisterMutation();
+    const dispatch = useDispatch();
+
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        expertise: '',
+        password: ''
+    });
+    const [error, setError] = useState(null);
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [id]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError(null);
+
+        try {
+            const data = await registerUser({
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                instructorProfile: {
+                    areaOfExpertise: formData.expertise
+                },
+                password: formData.password,
+                role: 'instructor'
+            }).unwrap();
+            dispatch(setCredentials({ user: data.user, accessToken: data.accessToken }));
+            router.push('/dashboard/instructor');
+        } catch (err) {
+            setError(err.data?.message || 'Registration failed');
+        }
+    };
+
     return (
         <>
             <NavBar />
@@ -19,7 +69,13 @@ export default function TeacherRegisterPage() {
                     <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Instructor Application</h2>
                     <p className="text-gray-500 mb-8">Join our faculty of world-class educators.</p>
 
-                    <form className="space-y-4">
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    <form className="space-y-4" onSubmit={handleSubmit}>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label htmlFor="firstName" className="block text-sm font-bold text-gray-700 mb-2">First Name</label>
@@ -30,6 +86,9 @@ export default function TeacherRegisterPage() {
                                     <input
                                         type="text"
                                         id="firstName"
+                                        value={formData.firstName}
+                                        onChange={handleChange}
+                                        required
                                         className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                         placeholder="Jane"
                                     />
@@ -44,6 +103,9 @@ export default function TeacherRegisterPage() {
                                     <input
                                         type="text"
                                         id="lastName"
+                                        value={formData.lastName}
+                                        onChange={handleChange}
+                                        required
                                         className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                         placeholder="Smith"
                                     />
@@ -60,6 +122,9 @@ export default function TeacherRegisterPage() {
                                 <input
                                     type="email"
                                     id="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
                                     className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                     placeholder="name@university.edu"
                                 />
@@ -75,6 +140,8 @@ export default function TeacherRegisterPage() {
                                 <input
                                     type="text"
                                     id="expertise"
+                                    value={formData.expertise}
+                                    onChange={handleChange}
                                     className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                     placeholder="e.g. Computer Science, Business Management"
                                 />
@@ -90,6 +157,9 @@ export default function TeacherRegisterPage() {
                                 <input
                                     type="password"
                                     id="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
                                     className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                     placeholder="••••••••"
                                 />
@@ -116,6 +186,5 @@ export default function TeacherRegisterPage() {
                 </div>
             </AuthSplitLayout>
         </>
-
     );
 }

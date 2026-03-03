@@ -1,9 +1,11 @@
 import React from 'react'
 import { Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSelector } from 'react-redux';
 
 const TopBar = () => {
     const today = new Date();
+    const user = useSelector((state) => state.auth.user);
     const formattedDate = new Intl.DateTimeFormat('en-US', {
         weekday: 'long',
         year: 'numeric',
@@ -23,12 +25,12 @@ const TopBar = () => {
             <div className="flex items-center gap-2 sm:gap-6">
                 <div className="flex items-center gap-3 pl-6 border-l border-slate-200">
                     <div className="text-right hidden sm:block">
-                        <p className="text-sm font-semibold leading-none">Ahmed Al-Maktoum</p>
-                        <p className="text-sm text-sSecondary font-medium">Student ID: 29481</p>
+                        <p className="text-sm font-semibold leading-none">{user?.name}</p>
+                        {/* <p className="text-sm text-sSecondary font-medium">Student ID: {user?._id}</p> */}
                     </div>
                     <Avatar className="border-2 border-sPrimary/20">
                         <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback>AA</AvatarFallback>
+                        <AvatarFallback>{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
                 </div>
             </div>
