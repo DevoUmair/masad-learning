@@ -17,10 +17,7 @@ export default function LessonInfo({ activeLesson, instructor }) {
                     {activeLesson.duration && <span>• {activeLesson.duration}</span>}
                 </div>
             </div>
-            <Button variant="outline" className="gap-2 border-slate-200 cursor-pointer">
-                {activeLesson.status === 'completed' ? 'Completed' : 'Mark as Complete'}
-                {activeLesson.status === 'completed' && <CheckCircle size={16} className="text-green-500" />}
-            </Button>
+
         </div>
     );
 }

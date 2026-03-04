@@ -4,7 +4,7 @@ import { ShieldCheck } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import CoursesToolbar from './_components/CoursesToolbar';
 import CoursesTable from './_components/CoursesTable';
-
+import { useGetCoursesQuery } from '@/redux/course/courseApi';
 // Mock Data
 const initialCourses = [
     {
@@ -50,9 +50,25 @@ const initialCourses = [
 
 export default function CourseManagementPage() {
     const [searchTerm, setSearchTerm] = useState("");
+    const { data: courses, isLoading, error } = useGetCoursesQuery();
     const [categoryFilter, setCategoryFilter] = useState("All");
 
-    const filteredCourses = initialCourses.filter(c => {
+    const apiCourses = courses?.courses || [];
+
+    const mappedCourses = apiCourses.map(c => ({
+        id: c._id,
+        title: c.title,
+        instructor: c.instructor?.name || "Unknown",
+        category: c.category?.name || "Uncategorized", // Assuming category might just be an ID right now
+        rating: c.averageRating || 0,
+        students: c.instructor?.instructorProfile?.totalStudents || 0,
+        price: c.price === 0 ? "Free" : `$${c.price}`,
+        status: c.isApproved ? "Published" : "In Review",
+        lastUpdated: new Date(c.updatedAt).toLocaleDateString(),
+        modules: c.modules?.length || 0
+    }));
+
+    const filteredCourses = mappedCourses.filter(c => {
         const matchesSearch = c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             c.instructor.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = categoryFilter === "All" || c.category === categoryFilter;

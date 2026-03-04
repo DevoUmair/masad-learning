@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { Star, MoreVertical, Eye, BookOpen, List } from 'lucide-react';
-import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 import {
     Table,
     TableBody,
@@ -10,6 +10,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -31,7 +32,6 @@ export default function CoursesTable({ courses }) {
                             <TableHead>Performance</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Modules</TableHead>
-                            <TableHead>Revenue</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -78,12 +78,12 @@ export default function CoursesTable({ courses }) {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem>
-                                                <Eye className="mr-2 h-4 w-4" /> View Details
+                                            <DropdownMenuItem asChild>
+                                                <Link href={`/dashboard/admin/courses/${course.id}`} className="cursor-pointer">
+                                                    <Eye className="mr-2 h-4 w-4" /> View Details
+                                                </Link>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <BookOpen className="mr-2 h-4 w-4" /> Review Content
-                                            </DropdownMenuItem>
+
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem className="text-red-600">
                                                 Suspend Course
