@@ -15,7 +15,7 @@ const BunnyVideo = ({ libraryId, videoId, title = "Bunny Video Player" }) => {
         const response = await fetch(
           `http://localhost:5000/api/bunny/bunny-token?libraryId=${libraryId}&videoId=${videoId}`
         );
-
+        console.log(response)
         if (!response.ok) {
           throw new Error(`Failed to fetch secure URL: ${response.status}`);
         }

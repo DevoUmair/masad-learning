@@ -10,6 +10,7 @@ export default function AdminLayout({ children }) {
         { icon: Users, label: "Instructor Management", href: "/dashboard/admin/instructor" },
         { icon: Users, label: "Student Management", href: "/dashboard/admin/student" },
         { icon: ShieldCheck, label: "Course Management", href: "/dashboard/admin/courses" },
+        { icon: BarChart3, label: "Course Categories", href: "/dashboard/admin/course-categories" },
         { icon: Banknote, label: "Transactions", href: "/dashboard/admin/transactions" },
     ];
 

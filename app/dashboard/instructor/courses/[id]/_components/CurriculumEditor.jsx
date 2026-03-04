@@ -4,17 +4,7 @@ import { Plus, Trash2, GripVertical, Settings, Video as VideoIcon, FileText } fr
 import { Button } from "@/components/ui/button";
 import AddLessonDialog from './AddLessonDialog';
 
-export default function CurriculumEditor() {
-    const [modules, setModules] = useState([
-        {
-            id: 1,
-            title: "Introduction",
-            lessons: [
-                { id: 1, title: "Welcome to the course", type: "video", duration: "2:30" },
-                { id: 2, title: "Course Resources", type: "pdf", size: "5MB" }
-            ]
-        }
-    ]);
+export default function CurriculumEditor({ modules, setModules }) {
 
     // State for Add Lesson Dialog
     const [isAddLessonOpen, setIsAddLessonOpen] = useState(false);
@@ -49,12 +39,17 @@ export default function CurriculumEditor() {
                         ...module.lessons,
                         {
                             id: Date.now(), // Temporary ID
-                            title: lessonData.title,
-                            type: 'video', // Main type is video
-                            duration: '0:00', // Placeholder
-                            hasPdf: !!lessonData.pdf,
-                            videoFile: lessonData.video,
-                            pdfFile: lessonData.pdf
+                            videoTitle: lessonData.title,
+                            videoId: null, // Will be set after upload
+                            type: 'video', // Visual flag
+                            duration: 0, // Placeholder
+                            hasResources: lessonData.resources && lessonData.resources.length > 0,
+                            resources: (lessonData.resources || []).map(file => ({
+                                title: file.name,
+                                url: null, // Will be set after upload
+                                file: file // For preview/upload
+                            })),
+                            videoFile: lessonData.video, // For preview/upload
                         }
                     ]
                 };
@@ -119,9 +114,13 @@ export default function CurriculumEditor() {
                                     <div key={lesson.id} className="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 group transition-colors">
                                         <div className="flex items-center gap-3">
                                             <VideoIcon size={16} className="text-blue-500" />
-                                            <span className="text-sm font-medium text-slate-700">{lesson.title}</span>
-                                            {lesson.hasPdf && <FileText size={14} className="text-green-500 ml-2" />}
-                                            {lesson.type === 'pdf' && <FileText size={16} className="text-green-500" />}
+                                            <span className="text-sm font-medium text-slate-700">{lesson.videoTitle || lesson.title}</span>
+                                            {lesson.hasResources && (
+                                                <div className="flex items-center gap-1 ml-2 text-green-500">
+                                                    <FileText size={14} />
+                                                    <span className="text-xs">{lesson.resources.length}</span>
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="flex items-center gap-3">
                                             <span className="text-xs text-slate-400 px-2 py-1 bg-slate-100 rounded group-hover:bg-white">

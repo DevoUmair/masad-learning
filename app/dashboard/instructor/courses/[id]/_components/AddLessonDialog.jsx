@@ -17,7 +17,7 @@ import { Video, FileText, Upload, X } from 'lucide-react';
 export default function AddLessonDialog({ open, onOpenChange, onSave }) {
     const [title, setTitle] = useState('');
     const [videoFile, setVideoFile] = useState(null);
-    const [pdfFile, setPdfFile] = useState(null);
+    const [resourceFiles, setResourceFiles] = useState([]);
 
     const handleSubmit = () => {
         if (!title || !videoFile) return;
@@ -25,21 +25,22 @@ export default function AddLessonDialog({ open, onOpenChange, onSave }) {
         onSave({
             title,
             video: videoFile,
-            pdf: pdfFile
+            resources: resourceFiles
         });
 
         // Reset form
         setTitle('');
         setVideoFile(null);
-        setPdfFile(null);
+        setResourceFiles([]);
         onOpenChange(false);
     };
 
     const handleFileChange = (e, type) => {
-        const file = e.target.files[0];
-        if (file) {
-            if (type === 'video') setVideoFile(file);
-            else setPdfFile(file);
+        if (type === 'video') {
+            setVideoFile(e.target.files[0]);
+        } else {
+            const files = Array.from(e.target.files);
+            setResourceFiles(prev => [...prev, ...files]);
         }
     };
 
@@ -89,34 +90,42 @@ export default function AddLessonDialog({ open, onOpenChange, onSave }) {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label>Lesson Resources (PDF - Optional)</Label>
-                        <div className="border-2 border-dashed border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition-colors text-center cursor-pointer relative">
+                        <Label>Lesson Resources (Optional)</Label>
+                        <div className="border-2 border-dashed border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition-colors text-center cursor-pointer relative min-h-[100px] flex flex-col items-center justify-center">
                             <input
                                 type="file"
-                                accept="application/pdf"
-                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                onChange={(e) => handleFileChange(e, 'pdf')}
+                                multiple
+                                accept=".pdf,.doc,.docx,.zip,.rar"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                                onChange={(e) => handleFileChange(e, 'resources')}
                             />
-                            {pdfFile ? (
-                                <div className="flex items-center justify-center gap-2 text-green-600 font-medium">
-                                    <FileText size={16} />
-                                    {pdfFile.name}
-                                    <button
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            setPdfFile(null);
-                                        }}
-                                        className="p-1 hover:bg-red-100 text-red-500 rounded-full ml-2 z-10 relative"
-                                    >
-                                        <X size={12} />
-                                    </button>
+                            {resourceFiles.length > 0 ? (
+                                <div className="space-y-2 mt-2 w-full relative z-30">
+                                    {resourceFiles.map((file, idx) => (
+                                        <div key={idx} className="flex items-center justify-between gap-2 text-green-600 font-medium bg-green-50 p-2 rounded">
+                                            <div className="flex items-center gap-2 overflow-hidden pointer-events-none">
+                                                <FileText size={16} className="shrink-0" />
+                                                <span className="truncate text-sm">{file.name}</span>
+                                            </div>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setResourceFiles(prev => prev.filter((_, i) => i !== idx));
+                                                }}
+                                                className="p-1 hover:bg-red-100 text-red-500 rounded-full shrink-0 cursor-pointer z-40"
+                                            >
+                                                <X size={12} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <div className="text-slate-500 text-xs mt-2 pointer-events-none">Click or drag more files to add</div>
                                 </div>
                             ) : (
-                                <div className="text-slate-500">
+                                <div className="text-slate-500 pointer-events-none">
                                     <Upload className="mx-auto h-8 w-8 text-slate-300 mb-2" />
-                                    <span className="text-sm font-medium">Click to upload PDF</span>
-                                    <p className="text-xs text-slate-400 mt-1">PDF up to 10MB</p>
+                                    <span className="text-sm font-medium">Click to upload resources</span>
+                                    <p className="text-xs text-slate-400 mt-1">PDF, DOC, ZIP up to 10MB each</p>
                                 </div>
                             )}
                         </div>

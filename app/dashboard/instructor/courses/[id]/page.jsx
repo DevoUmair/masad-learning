@@ -1,16 +1,106 @@
 "use client";
 import React, { useState, use } from 'react';
-import { ArrowLeft, Save, Layout, List, Settings } from 'lucide-react';
+import { ArrowLeft, Save, Layout, List, Settings, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 import TabItem from './_components/TabItem';
 import BasicInfoForm from './_components/BasicInfoForm';
 import CurriculumEditor from './_components/CurriculumEditor';
 import SettingsForm from './_components/SettingsForm';
+import { useCreateCourseMutation } from '@/redux/course/courseApi';
+import { useRouter } from 'next/navigation';
 
 export default function CourseEditorPage({ params }) {
     const { id } = use(params);
+    const router = useRouter();
     const [activeTab, setActiveTab] = useState('basic');
+
+    // Redux mutation
+    const [createCourse, { isLoading }] = useCreateCourseMutation();
+
+    // Unified course state
+    const [courseData, setCourseData] = useState({
+        title: "",
+        description: "",
+        category: "60d5ecb8b392d7001f8e4e1a", // Placeholder ObjectId for Development
+        level: "All Levels",
+        totalVideoHours: 0,
+        downloadableResources: 0,
+        thumbnailImage: null
+    });
+
+    const [modules, setModules] = useState([
+        {
+            id: 1,
+            title: "Introduction",
+            lessons: []
+        }
+    ]);
+
+    const handleDataChange = (field, value) => {
+        setCourseData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleSave = async () => {
+        if (!courseData.title) {
+            alert("Course title is required.");
+            setActiveTab('basic');
+            return;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append("title", courseData.title);
+            formData.append("description", courseData.description);
+            formData.append("category", courseData.category);
+            formData.append("level", courseData.level);
+            formData.append("courseIncludes[totalVideoHours]", courseData.totalVideoHours);
+            formData.append("courseIncludes[downloadableResources]", courseData.downloadableResources);
+
+            if (courseData.thumbnailImage) {
+                formData.append("thumbnailImage", courseData.thumbnailImage);
+            }
+
+            // Deep clone modules to strip out raw file references from JSON payload
+            const modulesPayload = modules.map((m, mIndex) => ({
+                title: m.title,
+                description: m.description,
+                duration: m.duration || 0,
+                // Map active files into formData so backend sees them
+                lessons: m.lessons.map((l, lIndex) => {
+                    const lessonMap = {
+                        videoTitle: l.videoTitle || l.title,
+                        duration: l.duration || 0,
+                    };
+
+                    if (l.videoFile) {
+                        formData.append(`video_${mIndex}_${lIndex}`, l.videoFile);
+                    }
+
+                    if (l.resources && l.resources.length > 0) {
+                        l.resources.forEach((rFile, rIndex) => {
+                            formData.append(`resource_${mIndex}_${lIndex}_${rIndex}`, rFile);
+                        });
+                    }
+
+                    return lessonMap;
+                })
+            }));
+
+            formData.append("modules", JSON.stringify(modulesPayload));
+
+            // Execute mutation
+            const res = await createCourse(formData).unwrap();
+
+            if (res.success) {
+                alert("Course created successfully!");
+                router.push('/dashboard/instructor/courses');
+            }
+        } catch (error) {
+            console.error("Failed to save course:", error);
+            alert(error?.data?.message || "Failed to create course. Please try again.");
+        }
+    };
 
     return (
         <div className="space-y-6 font-lexend pb-20">
@@ -31,9 +121,13 @@ export default function CourseEditorPage({ params }) {
                 </div>
                 <div className="flex items-center gap-3">
                     <Button variant="outline" className="border-slate-200 cursor-pointer">Preview</Button>
-                    <Button className="bg-sPrimary hover:bg-sPrimary/90 text-white font-bold cursor-pointer">
-                        <Save size={18} className="mr-2" />
-                        Save Changes
+                    <Button
+                        onClick={handleSave}
+                        disabled={isLoading}
+                        className="bg-sPrimary hover:bg-sPrimary/90 text-white font-bold cursor-pointer"
+                    >
+                        {isLoading ? <Loader2 size={18} className="mr-2 animate-spin" /> : <Save size={18} className="mr-2" />}
+                        {isLoading ? 'Saving...' : 'Save Changes'}
                     </Button>
                 </div>
             </div>
@@ -64,8 +158,8 @@ export default function CourseEditorPage({ params }) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Form */}
                 <div className="lg:col-span-2 space-y-8">
-                    {activeTab === 'basic' && <BasicInfoForm />}
-                    {activeTab === 'curriculum' && <CurriculumEditor />}
+                    {activeTab === 'basic' && <BasicInfoForm data={courseData} onChange={handleDataChange} />}
+                    {activeTab === 'curriculum' && <CurriculumEditor modules={modules} setModules={setModules} />}
                     {activeTab === 'settings' && <SettingsForm />}
                 </div>
 

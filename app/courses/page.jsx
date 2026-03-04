@@ -7,6 +7,7 @@ import CourseCard from "./_components/CourseCard";
 import { ChevronDown, X, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useGetCoursesQuery } from "@/redux/course/courseApi";
 
 const courses = [
     {
@@ -86,6 +87,7 @@ const courses = [
 const activeFilters = ["Data Science", "UI/UX Design", "Management"];
 
 export default function CoursesPage() {
+    const { data, isLoading, error } = useGetCoursesQuery();
     return (
         <div className="min-h-screen bg-slate-50 font-lexend">
             <TopBar />

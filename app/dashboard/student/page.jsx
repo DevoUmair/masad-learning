@@ -12,7 +12,7 @@ export default function StudentDashboard() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-                        Welcome back, {user.name}! 👋
+                        Welcome back, {user?.name || 'Student'}! 👋
                     </h2>
                     <p className="text-sSecondary mt-1">You have 2 courses in progress.</p>
                 </div>
