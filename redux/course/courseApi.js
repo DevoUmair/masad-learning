@@ -11,12 +11,7 @@ export const courseApi = baseApi.injectEndpoints({
                 body: courseData,
             }),
         }),
-        // getCourses: builder.query({
-        //     query: () => ({
-        //         url: '/courses',
-        //         method: 'GET',
-        //     }),
-        // }),
+
         getCourses: builder.query({
             // Accept a params object so you can easily add more filters later
             query: (params = {}) => ({

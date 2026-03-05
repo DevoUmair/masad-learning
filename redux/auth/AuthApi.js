@@ -38,6 +38,9 @@ export const authApi = baseApi.injectEndpoints({
         getMe: builder.query({
             query: () => '/users/me',
         }),
+        getAllUsers: builder.query({
+            query: (role) => `/users?role=${role}`,
+        }),
     }),
     overrideExisting: false,
 });
@@ -47,4 +50,5 @@ export const {
     useRegisterMutation,
     useLogoutMutation,
     useGetMeQuery,
+    useGetAllUsersQuery,
 } = authApi;

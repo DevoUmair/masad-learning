@@ -10,7 +10,7 @@ export default function CourseCard({ course }) {
     const title = course.title || "Untitled Course";
     const instructor = course.instructor?.name || course.instructor || "Unknown";
     const rating = course.averageRating || course.rating || 0;
-    const reviews = course.totalReviews || course.reviews || 0;
+    const reviews = course.totalRatings || course.totalRatings || 0;
     const level = course.level || "All Levels";
     const price = course.price ?? 0;
     const image = course.thumbnailImage?.url || course.image || null;

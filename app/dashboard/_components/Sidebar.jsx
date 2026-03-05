@@ -33,7 +33,7 @@ export function Sidebar({ className, navItems = [] }) {
     const SidebarContent = () => (
         <div className="flex flex-col h-full justify-between py-6">
             <div className="flex flex-col gap-8 px-6">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push('/')}>
                     <Image src="/logo/logo2.png" alt="Logo" width={100} height={100} />
                     <div className="flex flex-col -ml-7">
                         <h1 className="text-sPrimary dark:text-white text-xl font-bold leading-tight">Masad</h1>

@@ -8,12 +8,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, Clock, BookOpen, BarChart, Globe, CheckCircle, Play, ArrowLeft, Loader2 } from "lucide-react";
 import { useGetCourseByIdQuery } from "@/redux/course/courseApi";
+import { useGetCourseRatingsQuery } from "@/redux/rating/ratingApi";
 import { useParams } from "next/navigation";
 import CourseDetailsSkeleton from "./_components/Skelton";
 export default function CourseDetailsPage() {
     const { id } = useParams();
     // Added isLoading and isError for better UX
     const { data, isLoading, isError } = useGetCourseByIdQuery(id);
+    const { data: ratingsData, isLoading: isLoadingRatings } = useGetCourseRatingsQuery({ courseId: id });
 
     // 1. Handle Loading State
     if (isLoading) {
@@ -171,7 +173,41 @@ export default function CourseDetailsPage() {
                         </div>
 
                         {/* Reviews */}
-                        {/* Note: Kept static for now as reviews are not present in the provided JSON data */}
+                        <div className="mt-14">
+                            <h2 className="text-xl font-bold text-slate-900 mb-6 border-b border-slate-100 pb-4">
+                                Student Feedback
+                            </h2>
+                            {isLoadingRatings ? (
+                                <div className="flex justify-center items-center py-10 text-slate-400">
+                                    <Loader2 className="animate-spin mr-2" /> Loading reviews...
+                                </div>
+                            ) : ratingsData?.ratings?.length > 0 ? (
+                                <div className="space-y-4">
+                                    {ratingsData.ratings.map((review) => {
+                                        const date = new Date(review.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
+                                        const initials = review.user?.name ? review.user.name.substring(0, 2).toUpperCase() :
+                                            (review.user?.firstName ? review.user.firstName.substring(0, 2).toUpperCase() : "U");
+                                        const name = review.user?.name || `${review.user?.firstName || ""} ${review.user?.lastName || ""}`.trim() || "Anonymous Student";
+
+                                        return (
+                                            <ReviewCard
+                                                key={review._id}
+                                                name={name}
+                                                date={date}
+                                                initials={initials}
+                                                rating={review.rating}
+                                                text={review.comment || "No comment provided."}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="bg-slate-50 border border-slate-100 rounded-xl p-8 text-center">
+                                    <p className="text-slate-500 font-medium">No reviews yet for this course.</p>
+                                    <p className="text-sm text-slate-400 mt-1">Be the first to review once you enroll!</p>
+                                </div>
+                            )}
+                        </div>
 
                     </div>
 
