@@ -43,12 +43,12 @@ export default function CurriculumEditor({ modules, setModules }) {
                             videoTitle: lessonData.title,
                             videoId: null, // Will be set after upload
                             type: 'video', // Visual flag
-                            duration: 0, // Placeholder
+                            duration: lessonData.duration || 0, // Gets the exact duration parsed by the frontend
                             hasResources: lessonData.resources && lessonData.resources.length > 0,
-                            resources: (lessonData.resources || []).map(file => ({
-                                title: file.name,
+                            resources: (lessonData.resources || []).map(rObj => ({
+                                title: rObj.title,
                                 url: null, // Will be set after upload
-                                file: file // For preview/upload
+                                file: rObj.file // Grabs the precise File object to prevent double-nesting
                             })),
                             videoFile: lessonData.video, // For preview/upload
                         }

@@ -252,8 +252,10 @@ export default function AdminCourseDetailsPage({ params }) {
                                                                 <>
                                                                     <span>•</span>
                                                                     <Clock size={14} />
-                                                                    <span>{module.moduleDuration} min</span>
-                                                                </>
+                                                                    <span>
+                                                                        {Math.floor(module.moduleDuration / 60)}:
+                                                                        {Math.floor(module.moduleDuration % 60).toString().padStart(2, "0")}
+                                                                    </span>                                                                </>
                                                             )}
                                                         </div>
                                                     </div>
@@ -264,7 +266,10 @@ export default function AdminCourseDetailsPage({ params }) {
                                                                     <PlayCircle size={14} className="text-blue-500 shrink-0" />
                                                                     <span className="text-slate-700">{lesson.title}</span>
                                                                 </div>
-                                                                <span className="text-slate-400 text-xs">{lesson.duration}</span>
+                                                                <span className="text-slate-400 text-xs">
+                                                                    {Math.floor(lesson.lessonDuration / 60)}:
+                                                                    {Math.floor(lesson.lessonDuration % 60).toString().padStart(2, "0")}
+                                                                </span>
                                                             </div>
                                                         ))}
                                                     </div>

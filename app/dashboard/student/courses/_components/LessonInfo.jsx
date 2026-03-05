@@ -5,10 +5,14 @@ import { Button } from '@/components/ui/button';
 import { useUpdateProgressMutation } from '@/redux/student/studentAPi';
 import { toast } from 'sonner';
 import CourseRatingModal from './CourseRatingModal';
+import { useSelector } from 'react-redux';
 
 export default function LessonInfo({ courseId, activeLesson, instructor, completedLessonIds = [] }) {
     const [updateProgress, { isLoading }] = useUpdateProgressMutation();
     const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+
+    const user = useSelector((state) => state.auth?.user);
+    const isAdmin = user?.role === 'admin';
 
     if (!activeLesson) return null;
 
@@ -51,19 +55,21 @@ export default function LessonInfo({ courseId, activeLesson, instructor, complet
                 </div>
 
                 <div className="shrink-0 flex items-center gap-3">
-                    {isCompleted ? (
-                        <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-lg font-bold">
-                            <CheckCircle size={18} /> Lesson Completed
-                        </div>
-                    ) : (
-                        <Button
-                            onClick={handleMarkComplete}
-                            disabled={isLoading}
-                            className="bg-green-600 cursor-pointer hover:bg-green-700 text-white gap-2 font-bold"
-                        >
-                            {isLoading ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle size={18} />}
-                            Complete Lesson
-                        </Button>
+                    {!isAdmin && (
+                        isCompleted ? (
+                            <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-lg font-bold">
+                                <CheckCircle size={18} /> Lesson Completed
+                            </div>
+                        ) : (
+                            <Button
+                                onClick={handleMarkComplete}
+                                disabled={isLoading}
+                                className="bg-green-600 cursor-pointer hover:bg-green-700 text-white gap-2 font-bold"
+                            >
+                                {isLoading ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle size={18} />}
+                                Complete Lesson
+                            </Button>
+                        )
                     )}
                 </div>
             </div>

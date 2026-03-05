@@ -34,7 +34,7 @@ export default function Curriculum({ modules = [] }) {
                             <span className="font-bold text-slate-900">{module.title}</span>
                         </div>
                         <div className="text-xs font-medium text-slate-500 hidden sm:block">
-                            {module.lessons?.length || 0} Lectures • {module.duration || 0} min
+                            {module.lessons?.length || 0} Lectures • {module.moduleDuration > 0 ? `${Math.floor(module.moduleDuration / 60)}:${Math.floor(module.moduleDuration % 60).toString().padStart(2, "0")}` : '0:00'}
                         </div>
                     </button>
 
@@ -60,7 +60,7 @@ export default function Curriculum({ modules = [] }) {
                                         </div>
                                         <div className="flex items-center gap-4">
                                             <span className="text-xs text-slate-400">
-                                                {lesson.duration > 0 ? `${lesson.duration} min` : "Video"}
+                                                {lesson.lessonDuration > 0 ? `${Math.floor(lesson.lessonDuration / 60)}:${Math.floor(lesson.lessonDuration % 60).toString().padStart(2, "0")}` : "Video"}
                                             </span>
                                         </div>
                                     </div>

@@ -7,7 +7,7 @@ import VideoPlayer from '../_components/VideoPlayer';
 import LessonInfo from '../_components/LessonInfo';
 import { useGetCourseByIdQuery } from '@/redux/course/courseApi';
 import { useGetCourseProgressQuery } from '@/redux/student/studentAPi';
-import { Loader2 } from 'lucide-react';
+import { Loader2, PlayCircle, Clock, Download, Award, Infinity as InfinityIcon, CheckCircle2, BookOpen } from 'lucide-react';
 import { useParams } from 'next/navigation';
 
 export default function CoursePlayerPage() {
@@ -126,19 +126,165 @@ export default function CoursePlayerPage() {
                             </TabsList>
 
                             <TabsContent value="overview" className="space-y-6">
-                                {activeLesson && (
+                                {/* {activeLesson && (
                                     <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
                                         <h3 className="font-bold text-xl mb-3 text-slate-900">{activeLesson.videoTitle || activeLesson.title || "Lesson Overview"}</h3>
                                         <p className="text-slate-600 leading-relaxed whitespace-pre-line">
                                             {activeLesson.lessonDescription || "No description provided for this lesson."}
                                         </p>
                                     </div>
+                                )} */}
+                                {activeLesson && (
+                                    <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-300">
+
+                                        {/* Header */}
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="bg-blue-50 text-blue-600 p-2 rounded-lg">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="w-5 h-5"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 16V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2h12l4 4z" />
+                                                </svg>
+                                            </div>
+
+                                            <h3 className="font-semibold text-xl md:text-2xl text-slate-900">
+                                                {activeLesson.videoTitle || activeLesson.title || "Lesson Overview"}
+                                            </h3>
+                                        </div>
+
+                                        {/* Divider */}
+                                        <div className="h-px bg-slate-200 mb-4"></div>
+
+                                        {/* Description */}
+                                        <p className="text-slate-600 leading-relaxed text-[15px] md:text-base whitespace-pre-line">
+                                            {activeLesson.lessonDescription || "No description provided for this lesson."}
+                                        </p>
+
+                                    </div>
                                 )}
                                 <div>
                                     <h3 className="font-bold text-lg mb-3">About this course</h3>
-                                    <p className="text-slate-600 leading-relaxed whitespace-pre-line">
+                                    <p className="text-slate-600 leading-relaxed whitespace-pre-wrap mb-6">
                                         {courseData.description || "No description provided."}
                                     </p>
+
+                                    {/* Course Info Grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-slate-200">
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Category</p>
+                                            <p className="font-semibold text-slate-900">{courseData.category?.name || "Not specified"}</p>
+                                        </div>
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Level</p>
+                                            <p className="font-semibold text-slate-900">{courseData.level || "All Levels"}</p>
+                                        </div>
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Instructor</p>
+                                            <p className="font-semibold text-slate-900">{courseData.instructor?.name || "Unknown"}</p>
+                                            {courseData.instructor?.email && <p className="text-xs text-slate-500 mt-0.5">{courseData.instructor.email}</p>}
+                                        </div>
+                                    </div>
+
+                                    {/* Course Includes */}
+                                    <div className="pt-6 mt-6 border-t border-slate-200">
+                                        <h3 className="font-bold text-lg mb-4">Course Includes</h3>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-xl border border-blue-100">
+                                                <Clock size={20} className="text-blue-600 shrink-0" />
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-900">{courseData.courseIncludes?.totalVideoHours || 0} Hours</p>
+                                                    <p className="text-xs text-slate-500">Video Content</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3 bg-green-50 p-3 rounded-xl border border-green-100">
+                                                <Download size={20} className="text-green-600 shrink-0" />
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-900">{courseData.courseIncludes?.downloadableResources || 0} Files</p>
+                                                    <p className="text-xs text-slate-500">Resources</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3 bg-purple-50 p-3 rounded-xl border border-purple-100">
+                                                <InfinityIcon size={20} className="text-purple-600 shrink-0" />
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-900">{courseData.courseIncludes?.fullLifetimeAccess !== false ? 'Yes' : 'No'}</p>
+                                                    <p className="text-xs text-slate-500">Lifetime Access</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3 bg-amber-50 p-3 rounded-xl border border-amber-100">
+                                                <Award size={20} className="text-amber-600 shrink-0" />
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-900">{courseData.courseIncludes?.certificateOfCompletion !== false ? 'Yes' : 'No'}</p>
+                                                    <p className="text-xs text-slate-500">Certificate</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* What You Will Learn */}
+                                    {courseData.whatYouWillLearn?.length > 0 && (
+                                        <div className="pt-6 mt-6 border-t border-slate-200">
+                                            <h3 className="font-bold text-lg mb-4">What You Will Learn</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                {courseData.whatYouWillLearn.map((item, index) => (
+                                                    <div key={index} className="flex items-start gap-2.5 bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                                                        <CheckCircle2 size={18} className="text-emerald-600 mt-0.5 shrink-0" />
+                                                        <span className="text-sm text-slate-700">{item}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Module Overview */}
+                                    {courseData.modules?.length > 0 && (
+                                        <div className="pt-6 mt-6 border-t border-slate-200">
+                                            <h3 className="font-bold text-lg mb-4">Curriculum Overview</h3>
+                                            <div className="space-y-3">
+                                                {courseData.modules.map((module, mIdx) => (
+                                                    <div key={module._id || module.id || mIdx} className="bg-slate-50 rounded-xl border border-slate-100 overflow-hidden">
+                                                        <div className="p-4 flex items-center justify-between">
+                                                            <div>
+                                                                <p className="font-bold text-slate-900">Module {mIdx + 1}: {module.title}</p>
+                                                                {module.description && <p className="text-xs text-slate-500 mt-1">{module.description}</p>}
+                                                            </div>
+                                                            <div className="flex items-center gap-2 text-xs text-slate-500">
+                                                                <BookOpen size={14} />
+                                                                <span>{module.lessons?.length || 0} lessons</span>
+                                                                {module.moduleDuration > 0 && (
+                                                                    <>
+                                                                        <span>•</span>
+                                                                        <Clock size={14} />
+                                                                        <span>
+                                                                            {Math.floor(module.moduleDuration / 60)}:
+                                                                            {Math.floor(module.moduleDuration % 60).toString().padStart(2, "0")}
+                                                                        </span>
+                                                                    </>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <div className="border-t border-slate-100">
+                                                            {module.lessons?.map((lesson, lIdx) => (
+                                                                <div key={lesson._id || lesson.id || lIdx} className="px-4 py-2.5 flex items-center justify-between text-sm border-b border-slate-50 last:border-b-0 hover:bg-slate-100/50 transition-colors">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <PlayCircle size={14} className="text-blue-500 shrink-0" />
+                                                                        <span className="text-slate-700">{lesson.lessonTitle || lesson.videoTitle || lesson.title}</span>
+                                                                    </div>
+                                                                    <span className="text-slate-400 text-xs">
+                                                                        {Math.floor((lesson.lessonDuration || 0) / 60)}:
+                                                                        {Math.floor((lesson.lessonDuration || 0) % 60).toString().padStart(2, "0")}
+                                                                    </span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </TabsContent>
                             <TabsContent value="resources" className="space-y-4">

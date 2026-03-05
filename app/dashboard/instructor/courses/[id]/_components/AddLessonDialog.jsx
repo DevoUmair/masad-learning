@@ -20,6 +20,8 @@ export default function AddLessonDialog({ open, onOpenChange, onSave }) {
     const [videoFile, setVideoFile] = useState(null);
     const [resourceFiles, setResourceFiles] = useState([]); // [{ title: string, file: File }]
 
+    const [videoDuration, setVideoDuration] = useState(0);
+
     const handleSubmit = () => {
         if (!title || !videoFile) return;
 
@@ -27,6 +29,7 @@ export default function AddLessonDialog({ open, onOpenChange, onSave }) {
             title,
             description,
             video: videoFile,
+            duration: videoDuration,
             resources: resourceFiles
         });
 
@@ -34,13 +37,28 @@ export default function AddLessonDialog({ open, onOpenChange, onSave }) {
         setTitle('');
         setDescription('');
         setVideoFile(null);
+        setVideoDuration(0);
         setResourceFiles([]);
         onOpenChange(false);
     };
 
     const handleFileChange = (e, type) => {
         if (type === 'video') {
-            setVideoFile(e.target.files[0]);
+            const file = e.target.files[0];
+            setVideoFile(file);
+
+            // Extract exact video duration on the frontend
+            if (file) {
+                const videoElement = document.createElement('video');
+                videoElement.preload = 'metadata';
+                videoElement.onloadedmetadata = () => {
+                    window.URL.revokeObjectURL(videoElement.src);
+                    setVideoDuration(videoElement.duration);
+                };
+                videoElement.src = URL.createObjectURL(file);
+            } else {
+                setVideoDuration(0);
+            }
         } else {
             const files = Array.from(e.target.files).map(file => ({
                 title: file.name,

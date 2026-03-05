@@ -2,8 +2,12 @@
 import React from 'react';
 import { ChevronDown, Check, PlayCircle, Lock, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSelector } from 'react-redux';
 
 export default function CourseSidebar({ modules, activeLesson, expandedModules, toggleModule, onLessonSelect, completedLessonIds = [] }) {
+    const user = useSelector((state) => state.auth?.user);
+    const isAdmin = user?.role === 'admin';
+
     if (!modules || modules.length === 0) {
         return <div className="p-5 text-slate-500 text-sm">No modules available yet.</div>;
     }
@@ -58,7 +62,7 @@ export default function CourseSidebar({ modules, activeLesson, expandedModules, 
                                     const lessonId = lesson._id || lesson.id;
                                     const isActive = activeLesson?._id === lessonId || activeLesson?.id === lessonId;
                                     const isCompleted = completedLessonIds.includes(lessonId);
-                                    const isLocked = !isCompleted && checkIsLocked(lessonId);
+                                    const isLocked = !isAdmin && !isCompleted && checkIsLocked(lessonId);
                                     const isVideo = !!lesson.videoId;
 
                                     return (
