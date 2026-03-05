@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, use } from 'react';
+import React, { useState, use, useEffect } from 'react';
 import { ArrowLeft, Save, Layout, List, Settings, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
@@ -7,25 +7,33 @@ import TabItem from './_components/TabItem';
 import BasicInfoForm from './_components/BasicInfoForm';
 import CurriculumEditor from './_components/CurriculumEditor';
 import SettingsForm from './_components/SettingsForm';
-import { useCreateCourseMutation } from '@/redux/course/courseApi';
+import { useCreateCourseMutation, useGetCourseByIdQuery, useEditCourseMutation } from '@/redux/course/courseApi';
 import { useRouter } from 'next/navigation';
 
 export default function CourseEditorPage({ params }) {
     const { id } = use(params);
     const router = useRouter();
     const [activeTab, setActiveTab] = useState('basic');
+    const isNew = id === 'new';
 
-    // Redux mutation
-    const [createCourse, { isLoading }] = useCreateCourseMutation();
+    // Redux mutations
+    const [createCourse, { isLoading: isCreating }] = useCreateCourseMutation();
+    const [editCourse, { isLoading: isEditing }] = useEditCourseMutation();
+    const { data: courseResponse, isLoading: isFetching } = useGetCourseByIdQuery(id, { skip: isNew });
+
+    const isLoading = isCreating || isEditing;
 
     // Unified course state
     const [courseData, setCourseData] = useState({
         title: "",
         description: "",
-        category: "60d5ecb8b392d7001f8e4e1a", // Placeholder ObjectId for Development
+        category: "",
         level: "All Levels",
         totalVideoHours: 0,
         downloadableResources: 0,
+        fullLifetimeAccess: true,
+        certificateOfCompletion: true,
+        whatYouWillLearn: [""],
         thumbnailImage: null
     });
 
@@ -36,6 +44,55 @@ export default function CourseEditorPage({ params }) {
             lessons: []
         }
     ]);
+
+    const [dataLoaded, setDataLoaded] = useState(false);
+
+    // Load existing course data when editing
+    useEffect(() => {
+        if (!isNew && courseResponse?.course && !dataLoaded) {
+            const c = courseResponse.course;
+            setCourseData({
+                title: c.title || "",
+                description: c.description || "",
+                category: c.category?._id || c.category || "",
+                level: c.level || "All Levels",
+                totalVideoHours: c.courseIncludes?.totalVideoHours || 0,
+                downloadableResources: c.courseIncludes?.downloadableResources || 0,
+                fullLifetimeAccess: c.courseIncludes?.fullLifetimeAccess ?? true,
+                certificateOfCompletion: c.courseIncludes?.certificateOfCompletion ?? true,
+                whatYouWillLearn: c.whatYouWillLearn?.length > 0 ? c.whatYouWillLearn : [""],
+                thumbnailImage: null, // Don't set file - it's already uploaded
+                existingThumbnailUrl: c.thumbnailImage?.url || null
+            });
+
+            if (c.modules && c.modules.length > 0) {
+                setModules(c.modules.map((m, mIdx) => ({
+                    id: mIdx + 1,
+                    title: m.title || `Module ${mIdx + 1}`,
+                    description: m.description || "",
+                    moduleDuration: m.moduleDuration || 0,
+                    lessons: m.lessons.map(l => ({
+                        id: l._id,
+                        title: l.lessonTitle || l.videoTitle,
+                        videoTitle: l.videoTitle,
+                        description: l.lessonDescription || "",
+                        videoId: l.videoId,
+                        libraryId: l.libraryId,
+                        lessonDuration: l.lessonDuration || 0,
+                        resources: (l.resources || []).map(r => {
+                            // Resources are already ObjectIds on server
+                            if (typeof r === 'string') return r;
+                            return r._id || r;
+                        }),
+                        // No videoFile since it's already uploaded
+                        videoFile: null,
+                        isExisting: true
+                    }))
+                })));
+            }
+            setDataLoaded(true);
+        }
+    }, [courseResponse, isNew, dataLoaded]);
 
     const handleDataChange = (field, value) => {
         setCourseData(prev => ({ ...prev, [field]: value }));
@@ -56,6 +113,9 @@ export default function CourseEditorPage({ params }) {
             formData.append("level", courseData.level);
             formData.append("courseIncludes[totalVideoHours]", courseData.totalVideoHours);
             formData.append("courseIncludes[downloadableResources]", courseData.downloadableResources);
+            formData.append("courseIncludes[fullLifetimeAccess]", courseData.fullLifetimeAccess);
+            formData.append("courseIncludes[certificateOfCompletion]", courseData.certificateOfCompletion);
+            formData.append("whatYouWillLearn", JSON.stringify(courseData.whatYouWillLearn.filter(item => item.trim() !== "")));
 
             if (courseData.thumbnailImage) {
                 formData.append("thumbnailImage", courseData.thumbnailImage);
@@ -66,20 +126,38 @@ export default function CourseEditorPage({ params }) {
                 title: m.title,
                 description: m.description,
                 duration: m.duration || 0,
-                // Map active files into formData so backend sees them
                 lessons: m.lessons.map((l, lIndex) => {
                     const lessonMap = {
                         videoTitle: l.videoTitle || l.title,
+                        lessonTitle: l.title || l.videoTitle,
+                        lessonDescription: l.description || "",
                         duration: l.duration || 0,
+                        lessonDuration: l.lessonDuration || 0,
                     };
 
+                    // Keep existing video data for edit mode
+                    if (l.videoId) lessonMap.videoId = l.videoId;
+                    if (l.libraryId) lessonMap.libraryId = l.libraryId;
+
+                    // Keep existing resource ObjectIds
+                    if (l.resources && l.resources.length > 0) {
+                        lessonMap.resources = l.resources.filter(r => typeof r === 'string' && r.match(/^[0-9a-fA-F]{24}$/));
+                    }
+
+                    // Only append new video files
                     if (l.videoFile) {
                         formData.append(`video_${mIndex}_${lIndex}`, l.videoFile);
                     }
 
+                    // Only append new resource files
                     if (l.resources && l.resources.length > 0) {
-                        l.resources.forEach((rFile, rIndex) => {
-                            formData.append(`resource_${mIndex}_${lIndex}_${rIndex}`, rFile);
+                        let newResIdx = 0;
+                        l.resources.forEach((rObj) => {
+                            if (rObj.file) {
+                                formData.append(`resource_${mIndex}_${lIndex}_${newResIdx}`, rObj.file);
+                                formData.append(`resourceTitle_${mIndex}_${lIndex}_${newResIdx}`, rObj.title || rObj.file.name);
+                                newResIdx++;
+                            }
                         });
                     }
 
@@ -89,18 +167,31 @@ export default function CourseEditorPage({ params }) {
 
             formData.append("modules", JSON.stringify(modulesPayload));
 
-            // Execute mutation
-            const res = await createCourse(formData).unwrap();
+            let res;
+            if (isNew) {
+                res = await createCourse(formData).unwrap();
+            } else {
+                res = await editCourse({ id, formData }).unwrap();
+            }
 
             if (res.success) {
-                alert("Course created successfully!");
+                alert(isNew ? "Course created successfully!" : "Course updated successfully!");
                 router.push('/dashboard/instructor/courses');
             }
         } catch (error) {
             console.error("Failed to save course:", error);
-            alert(error?.data?.message || "Failed to create course. Please try again.");
+            alert(error?.data?.message || "Failed to save course. Please try again.");
         }
     };
+
+    if (!isNew && isFetching) {
+        return (
+            <div className="flex items-center justify-center h-64 font-lexend">
+                <Loader2 size={32} className="animate-spin text-sPrimary" />
+                <span className="ml-3 text-slate-500">Loading course data...</span>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6 font-lexend pb-20">
@@ -112,10 +203,10 @@ export default function CourseEditorPage({ params }) {
                     </Link>
                     <div>
                         <h1 className="text-2xl font-black text-slate-900">
-                            {id === 'new' ? 'Create New Course' : 'Edit Course'}
+                            {isNew ? 'Create New Course' : 'Edit Course'}
                         </h1>
                         <p className="text-slate-500 text-sm mt-1">
-                            {id === 'new' ? 'Start building your new curriculum' : 'Update your course content and details'}
+                            {isNew ? 'Start building your new curriculum' : 'Update your course content and details'}
                         </p>
                     </div>
                 </div>

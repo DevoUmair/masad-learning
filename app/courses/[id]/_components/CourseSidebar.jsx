@@ -2,15 +2,15 @@
 import { Button } from "@/components/ui/button";
 import { MonitorPlay, FileText, Infinity, Smartphone, Trophy, Share2, Heart, Flag } from "lucide-react";
 
-export default function CourseSidebar() {
+export default function CourseSidebar({ course }) {
     return (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sticky top-24">
             {/* Price Header */}
             <div className="mb-6">
-                <div className="flex items-end gap-2 mb-1">
-                    <span className="text-3xl font-black text-slate-900">1,499 AED</span>
-                    <span className="text-sm text-slate-400 line-through mb-1.5">2,999 AED</span>
-                    <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded mb-1.5">50% OFF</span>
+                <div className="flex items-center justify-center gap-2 mb-1">
+                    <span className="text-3xl font-black text-slate-900">{course.price} AED</span>
+                    {/* <span className="text-sm text-slate-400 line-through mb-1.5">2,999 AED</span>
+                    <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded mb-1.5">50% OFF</span> */}
                 </div>
             </div>
 
@@ -29,10 +29,18 @@ export default function CourseSidebar() {
                 <p className="font-bold text-sm text-slate-900">This course includes:</p>
                 <ul className="space-y-3">
                     <FeatureItem icon={MonitorPlay} text="24 hours on-demand video" />
-                    <FeatureItem icon={FileText} text="12 downloadable resources" />
-                    <FeatureItem icon={Infinity} text="Full lifetime access" />
+                    <FeatureItem icon={FileText} text={`${course.courseIncludes?.totalVideoHours} hours on-demand video`} />
+                    {
+                        course.courseIncludes?.fullLifetimeAccess && (
+                            <FeatureItem icon={Infinity} text="Full lifetime access" />
+                        )
+                    }
                     <FeatureItem icon={Smartphone} text="Access on mobile and TV" />
-                    <FeatureItem icon={Trophy} text="Certificate of completion" />
+                    {
+                        course.courseIncludes?.certificateOfCompletion && (
+                            <FeatureItem icon={Trophy} text="Certificate of completion" />
+                        )
+                    }
                 </ul>
             </div>
 
@@ -44,9 +52,7 @@ export default function CourseSidebar() {
                 <button className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-red-500 transition-colors">
                     <Heart size={18} /> Save
                 </button>
-                <button className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors">
-                    <Flag size={18} />
-                </button>
+
             </div>
         </div>
     );

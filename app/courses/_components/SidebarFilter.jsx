@@ -1,14 +1,15 @@
 "use client";
 import { useState } from "react";
-import { ChevronDown, Star, Search } from "lucide-react";
+import { ChevronDown, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useGetCategoriesQuery } from "@/redux/categories/categoriesApi";
 
-export default function SidebarFilter() {
+export default function SidebarFilter({ filters, onFilterChange }) {
+    const { data: categories, isLoading } = useGetCategoriesQuery();
     const [openSections, setOpenSections] = useState({
         category: true,
         level: true,
-        duration: false,
         rating: true
     });
 
@@ -17,6 +18,26 @@ export default function SidebarFilter() {
             ...prev,
             [section]: !prev[section]
         }));
+    };
+
+    const toggleCategory = (categoryId) => {
+        const current = filters.categories || [];
+        const updated = current.includes(categoryId)
+            ? current.filter(id => id !== categoryId)
+            : [...current, categoryId];
+        onFilterChange('categories', updated);
+    };
+
+    const setLevel = (level) => {
+        onFilterChange('level', level);
+    };
+
+    const setRating = (rating) => {
+        onFilterChange('rating', rating);
+    };
+
+    const handleReset = () => {
+        onFilterChange('reset');
     };
 
     return (
@@ -32,12 +53,23 @@ export default function SidebarFilter() {
                 onToggle={() => toggleSection('category')}
             >
                 <div className="space-y-3">
-                    <FilterCheckbox label="Business" count={120} checked />
-                    <FilterCheckbox label="Technology" count={85} />
-                    <FilterCheckbox label="Design" count={40} />
-                    <FilterCheckbox label="Leadership" count={32} />
-                    <FilterCheckbox label="Marketing" count={24} />
-                    <FilterCheckbox label="Finance" count={18} />
+                    {isLoading ? (
+                        [...Array(5)].map((_, i) => (
+                            <div key={i} className="flex items-center gap-3 animate-pulse">
+                                <div className="size-4 rounded bg-slate-200" />
+                                <div className="h-3 rounded bg-slate-200" style={{ width: `${60 + Math.random() * 40}%` }} />
+                            </div>
+                        ))
+                    ) : (
+                        categories?.categories?.map((category) => (
+                            <FilterCheckbox
+                                key={category._id}
+                                label={category.name}
+                                checked={(filters.categories || []).includes(category._id)}
+                                onChange={() => toggleCategory(category._id)}
+                            />
+                        ))
+                    )}
                 </div>
             </FilterSection>
 
@@ -48,23 +80,15 @@ export default function SidebarFilter() {
                 onToggle={() => toggleSection('level')}
             >
                 <div className="space-y-3">
-                    <FilterRadio label="Beginner" name="level" />
-                    <FilterRadio label="Intermediate" name="level" />
-                    <FilterRadio label="Advanced" name="level" />
-                </div>
-            </FilterSection>
-
-            {/* Duration Filter */}
-            <FilterSection
-                title="Duration"
-                isOpen={openSections.duration}
-                onToggle={() => toggleSection('duration')}
-            >
-                <div className="space-y-3">
-                    <FilterCheckbox label="0-2 Hours" />
-                    <FilterCheckbox label="3-6 Hours" />
-                    <FilterCheckbox label="7-16 Hours" />
-                    <FilterCheckbox label="17+ Hours" />
+                    {["Beginner", "Intermediate", "Advanced", "All Levels"].map((lvl) => (
+                        <FilterRadio
+                            key={lvl}
+                            label={lvl}
+                            name="level"
+                            checked={filters.level === lvl}
+                            onChange={() => setLevel(lvl)}
+                        />
+                    ))}
                 </div>
             </FilterSection>
 
@@ -74,24 +98,30 @@ export default function SidebarFilter() {
                 isOpen={openSections.rating}
                 onToggle={() => toggleSection('rating')}
             >
-                <div className="space-y-2">
+                <div className="space-y-3">
                     {[5, 4, 3].map((rating) => (
-                        <div key={rating} className="flex items-center gap-2 cursor-pointer group">
-                            <input type="radio" name="rating" id={`r-${rating}`} className="accent-sPrimary cursor-pointer" />
-                            <label htmlFor={`r-${rating}`} className="flex items-center gap-1 cursor-pointer text-sm text-slate-600 group-hover:text-slate-900">
+                        <div key={rating} className="flex items-center gap-2 cursor-pointer group" onClick={() => setRating(rating)}>
+                            <input
+                                type="radio"
+                                name="rating"
+                                checked={filters.rating === rating}
+                                onChange={() => setRating(rating)}
+                                className="accent-sPrimary cursor-pointer"
+                            />
+                            <label className="flex items-center gap-1 cursor-pointer text-sm text-slate-600 group-hover:text-slate-900">
                                 <div className="flex text-yellow-400">
                                     {[...Array(5)].map((_, i) => (
                                         <Star key={i} size={14} fill={i < rating ? "currentColor" : "none"} className={i >= rating ? "text-slate-200" : ""} />
                                     ))}
                                 </div>
-                                <span className="text-xs text-slate-400 font-medium">& up</span>
+                                <span className="text-xs text-slate-400 font-medium">&amp; up</span>
                             </label>
                         </div>
                     ))}
                 </div>
             </FilterSection>
 
-            <Button className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border-none" size="lg">
+            <Button onClick={handleReset} className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border-none" size="lg">
                 Reset All Filters
             </Button>
         </div>
@@ -118,12 +148,12 @@ function FilterSection({ title, isOpen, onToggle, children }) {
     );
 }
 
-function FilterCheckbox({ label, count, checked }) {
+function FilterCheckbox({ label, count, checked, onChange }) {
     return (
-        <label className="flex items-center justify-between group cursor-pointer">
+        <label className="flex items-center justify-between group cursor-pointer" onClick={onChange}>
             <div className="flex items-center gap-3">
                 <div className={cn(
-                    "size-4 rounded border flex items-center justify-center transition-colors",
+                    "size-4 rounded border flex items-center justify-center transition-colors shrink-0",
                     checked ? "bg-sPrimary border-sPrimary" : "border-slate-300 group-hover:border-sPrimary"
                 )}>
                     {checked && <div className="size-2 bg-white rounded-sm" />}
@@ -137,13 +167,19 @@ function FilterCheckbox({ label, count, checked }) {
     );
 }
 
-function FilterRadio({ label, name }) {
+function FilterRadio({ label, name, checked, onChange }) {
     return (
-        <label className="flex items-center gap-3 group cursor-pointer">
-            <div className="size-4 rounded-full border border-slate-300 group-hover:border-sPrimary flex items-center justify-center">
-                <div className="size-2 rounded-full bg-sPrimary scale-0 transition-transform group-active:scale-100" />
+        <label className="flex items-center gap-3 group cursor-pointer" onClick={onChange}>
+            <div className={cn(
+                "size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors",
+                checked ? "border-sPrimary" : "border-slate-300 group-hover:border-sPrimary"
+            )}>
+                <div className={cn(
+                    "size-2 rounded-full bg-sPrimary transition-transform",
+                    checked ? "scale-100" : "scale-0"
+                )} />
             </div>
-            <span className="text-sm text-slate-600 group-hover:text-slate-900">
+            <span className={cn("text-sm", checked ? "font-bold text-slate-900" : "text-slate-600 group-hover:text-slate-900")}>
                 {label}
             </span>
         </label>

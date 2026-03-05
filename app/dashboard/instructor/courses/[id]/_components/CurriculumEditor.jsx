@@ -15,6 +15,7 @@ export default function CurriculumEditor({ modules, setModules }) {
         setModules([...modules, {
             id: newModuleId,
             title: `Module ${newModuleId}`,
+            description: "",
             lessons: []
         }]);
     };
@@ -89,13 +90,35 @@ export default function CurriculumEditor({ modules, setModules }) {
                 <div className="space-y-4">
                     {modules.map((module, index) => (
                         <div key={module.id} className="border border-slate-200 rounded-xl overflow-hidden">
-                            <div className="bg-slate-50 p-4 flex items-center justify-between cursor-move">
-                                <div className="flex items-center gap-3">
-                                    <GripVertical size={20} className="text-slate-400" />
-                                    <span className="font-bold text-slate-800">Module {index + 1}: {module.title}</span>
+                            <div className="bg-slate-50 p-4 flex items-center justify-between cursor-move border-b border-slate-100">
+                                <div className="flex items-start gap-3 w-full mr-4">
+                                    <GripVertical size={20} className="text-slate-400 mt-2" />
+                                    <div className="space-y-2 w-full">
+                                        <input
+                                            type="text"
+                                            value={module.title}
+                                            onChange={(e) => {
+                                                const newModules = [...modules];
+                                                newModules[index].title = e.target.value;
+                                                setModules(newModules);
+                                            }}
+                                            placeholder={`Module ${index + 1} Title`}
+                                            className="font-bold text-slate-800 bg-transparent border-none outline-none focus:ring-0 p-0 w-full placeholder:text-slate-400"
+                                        />
+                                        <input
+                                            type="text"
+                                            value={module.description || ""}
+                                            onChange={(e) => {
+                                                const newModules = [...modules];
+                                                newModules[index].description = e.target.value;
+                                                setModules(newModules);
+                                            }}
+                                            placeholder="Add module description (optional)..."
+                                            className="text-sm text-slate-500 bg-transparent border-none outline-none focus:ring-0 p-0 w-full placeholder:text-slate-300"
+                                        />
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <button className="p-1.5 hover:bg-slate-200 rounded text-slate-500 cursor-pointer"><Settings size={16} /></button>
                                     <button
                                         className="p-1.5 hover:bg-red-100 rounded text-slate-500 hover:text-red-500 cursor-pointer"
                                         onClick={() => handleDeleteModule(module.id)}

@@ -11,14 +11,48 @@ export const courseApi = baseApi.injectEndpoints({
                 body: courseData,
             }),
         }),
+        // getCourses: builder.query({
+        //     query: () => ({
+        //         url: '/courses',
+        //         method: 'GET',
+        //     }),
+        // }),
         getCourses: builder.query({
-            query: () => ({
+            // Accept a params object so you can easily add more filters later
+            query: (params = {}) => ({
                 url: '/courses',
                 method: 'GET',
+                params: params,
+            }),
+        }),
+        approveCourse: builder.mutation({
+            query: ({ id, price }) => ({
+                url: `/courses/${id}/approve`,
+                method: 'PUT',
+                body: { price },
+            }),
+        }),
+        getInstructorCourses: builder.query({
+            query: (id) => ({
+                url: `/courses/${id}/instructor`,
+                method: 'GET',
+            }),
+        }),
+        getCourseById: builder.query({
+            query: (id) => ({
+                url: `/courses/${id}`,
+                method: 'GET',
+            }),
+        }),
+        editCourse: builder.mutation({
+            query: ({ id, formData }) => ({
+                url: `/courses/${id}`,
+                method: 'PUT',
+                body: formData,
             }),
         }),
     }),
     overrideExisting: false,
 });
 
-export const { useCreateCourseMutation, useGetCoursesQuery } = courseApi;
+export const { useCreateCourseMutation, useGetCoursesQuery, useApproveCourseMutation, useGetInstructorCoursesQuery, useGetCourseByIdQuery, useEditCourseMutation } = courseApi;

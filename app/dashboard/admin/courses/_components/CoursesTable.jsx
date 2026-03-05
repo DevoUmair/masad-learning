@@ -39,9 +39,22 @@ export default function CoursesTable({ courses }) {
                         {courses.map((course) => (
                             <TableRow key={course.id} className="hover:bg-slate-50/50 transition-colors">
                                 <TableCell>
-                                    <div>
-                                        <p className="font-bold text-slate-900">{course.title}</p>
-                                        <p className="text-xs text-slate-500">{course.category} • Updated {course.lastUpdated}</p>
+                                    <div className="flex items-center gap-3">
+                                        {course.thumbnail ? (
+                                            <img
+                                                src={course.thumbnail}
+                                                alt={course.title}
+                                                className="size-10 rounded-lg object-cover border border-slate-200 shrink-0"
+                                            />
+                                        ) : (
+                                            <div className="size-10 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 text-blue-500">
+                                                <BookOpen size={18} />
+                                            </div>
+                                        )}
+                                        <div>
+                                            <p className="font-bold text-slate-900">{course.title}</p>
+                                            <p className="text-xs text-slate-500">{course.category} • Updated {course.lastUpdated}</p>
+                                        </div>
                                     </div>
                                 </TableCell>
                                 <TableCell className="font-medium text-slate-700">{course.instructor}</TableCell>

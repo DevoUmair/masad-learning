@@ -58,8 +58,9 @@ export default function CourseManagementPage() {
     const mappedCourses = apiCourses.map(c => ({
         id: c._id,
         title: c.title,
+        thumbnail: c.thumbnailImage?.url || null,
         instructor: c.instructor?.name || "Unknown",
-        category: c.category?.name || "Uncategorized", // Assuming category might just be an ID right now
+        category: c.category?.name || "Uncategorized",
         rating: c.averageRating || 0,
         students: c.instructor?.instructorProfile?.totalStudents || 0,
         price: c.price === 0 ? "Free" : `$${c.price}`,

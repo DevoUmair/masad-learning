@@ -1,12 +1,14 @@
 "use client";
 import React, { useState, use, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PlayCircle } from 'lucide-react';
+import { PlayCircle, Clock, Download, Award, Infinity as InfinityIcon, CheckCircle2, BookOpen } from 'lucide-react';
 import CourseSidebar from '../../../student/courses/_components/CourseSidebar';
 import LessonInfo from '../../../student/courses/_components/LessonInfo';
 import BunnyVideo from '@/app/_components/BunnyVideo';
 import { useGetCoursesQuery } from '@/redux/course/courseApi';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import ApproveCourseModal from '../_components/ApproveCourseModal';
 
 export default function AdminCourseDetailsPage({ params }) {
     const { id } = use(params);
@@ -18,6 +20,7 @@ export default function AdminCourseDetailsPage({ params }) {
     const [expandedModules, setExpandedModules] = useState([]);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [showApproveModal, setShowApproveModal] = useState(false);
 
     // Filter course and map data
     const apiCourse = coursesData?.courses?.find(c => c._id === id);
@@ -29,12 +32,17 @@ export default function AdminCourseDetailsPage({ params }) {
             const mappedModules = apiCourse.modules.map((m, index) => ({
                 id: m._id,
                 title: m.title,
+                description: m.description || "",
+                moduleDuration: m.moduleDuration || 0,
                 lessons: m.lessons.map(l => ({
                     id: l._id,
-                    title: l.videoTitle,
-                    type: l.videoId ? 'video' : 'pdf', // simplistic assumption
-                    duration: l.duration ? `${l.duration} min` : '00:00',
-                    status: 'completed', // allow admin to view all
+                    title: l.lessonTitle || l.videoTitle,
+                    videoTitle: l.videoTitle,
+                    description: l.lessonDescription || "",
+                    type: l.videoId ? 'video' : 'pdf',
+                    duration: l.lessonDuration ? `${l.lessonDuration} min` : '00:00',
+                    lessonDuration: l.lessonDuration || 0,
+                    status: 'completed',
                     videoId: l.videoId,
                     libraryId: l.libraryId,
                     resources: l.resources
@@ -44,12 +52,16 @@ export default function AdminCourseDetailsPage({ params }) {
             setMappedCourse({
                 title: apiCourse.title,
                 instructor: apiCourse.instructor?.name || "Unknown",
+                instructorEmail: apiCourse.instructor?.email || "",
                 description: apiCourse.description,
-                category: apiCourse.category?.name || "Uncategorized", // Accessing populated category
-                courseIncludes: apiCourse.courseIncludes || { totalVideoHours: 0, downloadableResources: 0 },
+                category: apiCourse.category?.name || "Uncategorized",
+                level: apiCourse.level || "All Levels",
+                courseIncludes: apiCourse.courseIncludes || { totalVideoHours: 0, downloadableResources: 0, fullLifetimeAccess: true, certificateOfCompletion: true },
+                whatYouWillLearn: apiCourse.whatYouWillLearn || [],
                 modules: mappedModules,
                 thumbnailImage: apiCourse.thumbnailImage?.url,
-                totalProgress: 100 // Admin has full access
+                isApproved: apiCourse.isApproved,
+                totalProgress: 100
             });
 
             if (mappedModules.length > 0 && mappedModules[0].lessons.length > 0) {
@@ -78,18 +90,29 @@ export default function AdminCourseDetailsPage({ params }) {
 
     return (
         <div className="flex flex-col h-screen bg-white font-lexend overflow-hidden">
-            <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-4 md:px-6 shrink-0 z-20 relative">
-                <div className="flex items-center gap-4">
-                    <button onClick={() => router.back()} className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer">
+            <header className="py-3 min-h-[4rem] border-b border-slate-200 bg-white flex items-center justify-between px-4 md:px-6 shrink-0 z-20 relative">
+                {/* Left Side: Back Button (Top) & Heading (Bottom) */}
+                <div className="flex flex-col items-start gap-1">
+                    <button
+                        onClick={() => router.back()}
+                        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                    >
                         <span className="inline font-medium text-sm md:text-base">← Back to Courses</span>
                     </button>
-                    <div className="h-6 w-px bg-slate-200 hidden md:block" />
-                    <div>
-                        <h1 className="text-sm md:text-lg font-bold text-slate-900 truncate max-w-[200px] md:max-w-md">
-                            {mappedCourse.title}
-                        </h1>
-                    </div>
+
+                    <h1 className="text-sm md:text-lg font-bold text-slate-900 truncate max-w-[200px] md:max-w-md">
+                        {mappedCourse.title}
+                    </h1>
                 </div>
+
+                {/* Right Side: Approve Button */}
+                {!mappedCourse.isApproved ? (
+                    <div className="flex items-center">
+                        <Button onClick={() => setShowApproveModal(true)}>
+                            Approve Course
+                        </Button>
+                    </div>
+                ) : null}
             </header>
 
             {/* Main Content */}
@@ -138,18 +161,115 @@ export default function AdminCourseDetailsPage({ params }) {
                                         {mappedCourse.description || "No description provided."}
                                     </p>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-200">
+                                    {/* Course Info Grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-slate-200">
                                         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                             <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Category</p>
                                             <p className="font-semibold text-slate-900">{mappedCourse.category || "Not specified"}</p>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                            <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Total Video Content</p>
-                                            <p className="font-semibold text-slate-900">{mappedCourse.courseIncludes?.totalVideoHours || 0} Hours</p>
+                                            <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Level</p>
+                                            <p className="font-semibold text-slate-900">{mappedCourse.level}</p>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                            <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Downloadable Resources</p>
-                                            <p className="font-semibold text-slate-900">{mappedCourse.courseIncludes?.downloadableResources || 0} Files</p>
+                                            <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Instructor</p>
+                                            <p className="font-semibold text-slate-900">{mappedCourse.instructor}</p>
+                                            {mappedCourse.instructorEmail && <p className="text-xs text-slate-500 mt-0.5">{mappedCourse.instructorEmail}</p>}
+                                        </div>
+                                        {/* <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Status</p>
+                                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${mappedCourse.isApproved ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                                                {mappedCourse.isApproved ? 'Approved' : 'Pending Approval'}
+                                            </span>
+                                        </div> */}
+                                    </div>
+
+                                    {/* Course Includes */}
+                                    <div className="pt-6 mt-6 border-t border-slate-200">
+                                        <h3 className="font-bold text-lg mb-4">Course Includes</h3>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-xl border border-blue-100">
+                                                <Clock size={20} className="text-blue-600 shrink-0" />
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-900">{mappedCourse.courseIncludes?.totalVideoHours || 0} Hours</p>
+                                                    <p className="text-xs text-slate-500">Video Content</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3 bg-green-50 p-3 rounded-xl border border-green-100">
+                                                <Download size={20} className="text-green-600 shrink-0" />
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-900">{mappedCourse.courseIncludes?.downloadableResources || 0} Files</p>
+                                                    <p className="text-xs text-slate-500">Resources</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3 bg-purple-50 p-3 rounded-xl border border-purple-100">
+                                                <InfinityIcon size={20} className="text-purple-600 shrink-0" />
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-900">{mappedCourse.courseIncludes?.fullLifetimeAccess ? 'Yes' : 'No'}</p>
+                                                    <p className="text-xs text-slate-500">Lifetime Access</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3 bg-amber-50 p-3 rounded-xl border border-amber-100">
+                                                <Award size={20} className="text-amber-600 shrink-0" />
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-900">{mappedCourse.courseIncludes?.certificateOfCompletion ? 'Yes' : 'No'}</p>
+                                                    <p className="text-xs text-slate-500">Certificate</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* What You Will Learn */}
+                                    {mappedCourse.whatYouWillLearn?.length > 0 && (
+                                        <div className="pt-6 mt-6 border-t border-slate-200">
+                                            <h3 className="font-bold text-lg mb-4">What You Will Learn</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                {mappedCourse.whatYouWillLearn.map((item, index) => (
+                                                    <div key={index} className="flex items-start gap-2.5 bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                                                        <CheckCircle2 size={18} className="text-emerald-600 mt-0.5 shrink-0" />
+                                                        <span className="text-sm text-slate-700">{item}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Module Overview */}
+                                    <div className="pt-6 mt-6 border-t border-slate-200">
+                                        <h3 className="font-bold text-lg mb-4">Curriculum Overview</h3>
+                                        <div className="space-y-3">
+                                            {mappedCourse.modules.map((module, mIdx) => (
+                                                <div key={module.id} className="bg-slate-50 rounded-xl border border-slate-100 overflow-hidden">
+                                                    <div className="p-4 flex items-center justify-between">
+                                                        <div>
+                                                            <p className="font-bold text-slate-900">Module {mIdx + 1}: {module.title}</p>
+                                                            {module.description && <p className="text-xs text-slate-500 mt-1">{module.description}</p>}
+                                                        </div>
+                                                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                                                            <BookOpen size={14} />
+                                                            <span>{module.lessons.length} lessons</span>
+                                                            {module.moduleDuration > 0 && (
+                                                                <>
+                                                                    <span>•</span>
+                                                                    <Clock size={14} />
+                                                                    <span>{module.moduleDuration} min</span>
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="border-t border-slate-100">
+                                                        {module.lessons.map((lesson, lIdx) => (
+                                                            <div key={lesson.id} className="px-4 py-2.5 flex items-center justify-between text-sm border-b border-slate-50 last:border-b-0 hover:bg-slate-100/50 transition-colors">
+                                                                <div className="flex items-center gap-2">
+                                                                    <PlayCircle size={14} className="text-blue-500 shrink-0" />
+                                                                    <span className="text-slate-700">{lesson.title}</span>
+                                                                </div>
+                                                                <span className="text-slate-400 text-xs">{lesson.duration}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>
@@ -186,6 +306,13 @@ export default function AdminCourseDetailsPage({ params }) {
                     </div>
                 </aside>
             </div>
+
+            {/* Approve Course Modal */}
+            <ApproveCourseModal
+                isOpen={showApproveModal}
+                onClose={() => setShowApproveModal(false)}
+                courseId={id}
+            />
         </div>
     );
 }

@@ -1,10 +1,20 @@
 "use client";
 import React from 'react';
-import { Search, Plus, Filter, MoreVertical, Book, PenLine, Trash2 } from 'lucide-react';
+import { Search, Plus, Filter, Book, PenLine, Trash2, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { useGetInstructorCoursesQuery } from '@/redux/course/courseApi';
 
 export default function MyCoursesPage() {
+    const user = useSelector((state) => state.auth.user);
+    console.log(user);
+    const { data: coursesData, isLoading } = useGetInstructorCoursesQuery(user?._id, {
+        skip: !user?._id,
+    });
+
+    const courses = coursesData?.courses || [];
+
     return (
         <div className="space-y-6 font-lexend">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -47,57 +57,87 @@ export default function MyCoursesPage() {
                                 <th className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[40%]">Course Name</th>
                                 <th className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Price</th>
                                 <th className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                                <th className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Enrolled</th>
+                                <th className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Level</th>
                                 <th className="text-right py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {[1, 2, 3, 4].map((item) => (
-                                <tr key={item} className="hover:bg-slate-50/50 transition-colors group">
-                                    <td className="py-4 px-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className="size-12 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 text-sPrimary">
-                                                <Book size={20} />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-bold text-slate-900 cursor-pointer hover:text-sPrimary transition-colors">
-                                                    Complete Python Bootcamp 2024
-                                                </p>
-                                                <p className="text-xs text-slate-500">Development</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="py-4 px-6">
-                                        <div className="text-sm font-bold text-slate-900">AED 49.99</div>
-                                    </td>
-                                    <td className="py-4 px-6">
-                                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-green-100 text-green-700">
-                                            Published
-                                        </span>
-                                    </td>
-                                    <td className="py-4 px-6">
-                                        <div className="text-sm font-medium text-slate-600">1,234</div>
-                                    </td>
-                                    <td className="py-4 px-6 text-right">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <Link href={`/dashboard/instructor/courses/${item}`}>
-                                                <button className="p-2 text-slate-400 hover:text-sPrimary hover:bg-blue-50 rounded-lg transition-colors cursor-pointer" title="Edit">
-                                                    <PenLine size={18} />
-                                                </button>
-                                            </Link>
-                                            <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer" title="Delete">
-                                                <Trash2 size={18} />
-                                            </button>
-                                        </div>
+                            {isLoading ? (
+                                <tr>
+                                    <td colSpan={5} className="py-12 text-center">
+                                        <Loader2 size={24} className="animate-spin text-sPrimary mx-auto" />
+                                        <p className="text-sm text-slate-500 mt-2">Loading your courses...</p>
                                     </td>
                                 </tr>
-                            ))}
+                            ) : courses.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="py-12 text-center">
+                                        <Book size={32} className="text-slate-300 mx-auto mb-2" />
+                                        <p className="text-sm text-slate-500">You haven't created any courses yet.</p>
+                                        <Link href="/dashboard/instructor/courses/new">
+                                            <Button className="mt-4 bg-sPrimary hover:bg-sPrimary/90 text-white font-bold cursor-pointer" size="sm">
+                                                <Plus size={16} className="mr-1" /> Create Your First Course
+                                            </Button>
+                                        </Link>
+                                    </td>
+                                </tr>
+                            ) : (
+                                courses.map((course) => (
+                                    <tr key={course._id} className="hover:bg-slate-50/50 transition-colors group">
+                                        <td className="py-4 px-6">
+                                            <div className="flex items-center gap-4">
+                                                {course.thumbnailImage?.url ? (
+                                                    <img
+                                                        src={course.thumbnailImage.url}
+                                                        alt={course.title}
+                                                        className="size-12 rounded-lg object-cover border border-slate-200 shrink-0"
+                                                    />
+                                                ) : (
+                                                    <div className="size-12 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 text-sPrimary">
+                                                        <Book size={20} />
+                                                    </div>
+                                                )}
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-900 cursor-pointer hover:text-sPrimary transition-colors">
+                                                        {course.title}
+                                                    </p>
+                                                    <p className="text-xs text-slate-500">{course.category?.name || "Uncategorized"}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="py-4 px-6">
+                                            <div className="text-sm font-bold text-slate-900">
+                                                {course.price > 0 ? `AED ${course.price}` : 'Not approved'}
+                                            </div>
+                                        </td>
+                                        <td className="py-4 px-6">
+                                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${course.isApproved
+                                                ? 'bg-green-100 text-green-700'
+                                                : 'bg-amber-100 text-amber-700'
+                                                }`}>
+                                                {course.isApproved ? 'Approved' : 'Pending'}
+                                            </span>
+                                        </td>
+                                        <td className="py-4 px-6">
+                                            <div className="text-sm font-medium text-slate-600">{course.level || "All Levels"}</div>
+                                        </td>
+                                        <td className="py-4 px-6 text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <Link href={`/dashboard/instructor/courses/${course._id}`}>
+                                                    <button className="p-2 text-slate-400 hover:text-sPrimary hover:bg-blue-50 rounded-lg transition-colors cursor-pointer" title="Edit">
+                                                        <PenLine size={18} />
+                                                    </button>
+                                                </Link>
+                                                <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer" title="Delete">
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
-                </div>
-
-                <div className="p-4 border-t border-slate-100 text-center text-sm text-slate-500">
-                    <button className="hover:text-sPrimary font-medium cursor-pointer">Load more courses</button>
                 </div>
             </div>
         </div>
