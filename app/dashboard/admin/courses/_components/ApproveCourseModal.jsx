@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useApproveCourseMutation } from '@/redux/course/courseApi';
 import { Loader2, CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const ApproveCourseModal = ({ isOpen, onClose, courseId }) => {
     const [price, setPrice] = useState('');
@@ -20,21 +21,21 @@ const ApproveCourseModal = ({ isOpen, onClose, courseId }) => {
 
     const handleApprove = async () => {
         if (!price || isNaN(price) || Number(price) < 0) {
-            alert("Please enter a valid price.");
+            toast.error("Please enter a valid price.");
             return;
         }
 
         try {
             const res = await approveCourse({ id: courseId, price: Number(price) }).unwrap();
             if (res.success) {
-                alert("Course approved successfully!");
+                toast.success("Course approved successfully!");
                 setPrice('');
                 onClose();
                 window.location.reload();
             }
         } catch (error) {
             console.error("Failed to approve course:", error);
-            alert(error?.data?.message || "Failed to approve course.");
+            toast.error(error?.data?.message || "Failed to approve course.");
         }
     };
 

@@ -281,13 +281,42 @@ export default function AdminCourseDetailsPage({ params }) {
                             </TabsContent>
                             <TabsContent value="resources" className="space-y-4">
                                 {activeLesson?.resources?.length > 0 ? (
-                                    <ul className="list-disc pl-5">
-                                        {activeLesson.resources.map(res => (
-                                            <li key={res._id || Math.random()} className="text-slate-700 py-1">{res.title || "Resource"}</li>
+                                    <div className="grid gap-3">
+                                        {activeLesson.resources.map((res) => (
+                                            <div
+                                                key={res._id}
+                                                className="flex items-center justify-between bg-slate-50 border rounded-xl p-4 hover:bg-slate-100 transition"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className="bg-red-100 text-red-600 p-2 rounded-lg">
+                                                        📄
+                                                    </div>
+
+                                                    <div>
+                                                        <p className="text-sm font-medium text-slate-800">
+                                                            {res.title || "Resource"}
+                                                        </p>
+                                                        <p className="text-xs text-slate-500">
+                                                            Lesson Resource
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <a
+                                                    href={res.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm font-medium text-blue-600 hover:underline"
+                                                >
+                                                    View
+                                                </a>
+                                            </div>
                                         ))}
-                                    </ul>
+                                    </div>
                                 ) : (
-                                    <div className="text-slate-500 italic">No additional resources are attached to this lesson.</div>
+                                    <div className="text-slate-500 italic">
+                                        No additional resources are attached to this lesson.
+                                    </div>
                                 )}
                             </TabsContent>
                         </Tabs>

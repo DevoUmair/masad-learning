@@ -22,8 +22,8 @@ import {
 
 export default function CoursesTable({ courses }) {
     return (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex-1">
-            <div className="overflow-x-auto">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-y-auto shadow-sm overflow-hidden flex-1 ">
+            <div className="overflow-x-auto ">
                 <Table>
                     <TableHeader className="bg-slate-50">
                         <TableRow>

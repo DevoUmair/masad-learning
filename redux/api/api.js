@@ -67,5 +67,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const baseApi = createApi({
     baseQuery: baseQueryWithReauth,
+    tagTypes: ['Library', 'EnrolledCourses', 'CourseProgress'], // Enable cache invalidation
     endpoints: () => ({}), // We'll inject endpoints later
 });

@@ -6,15 +6,16 @@ import AddLessonDialog from './AddLessonDialog';
 
 export default function CurriculumEditor({ modules, setModules }) {
 
-    // State for Add Lesson Dialog
+    // State for Add/Edit Lesson Dialog
     const [isAddLessonOpen, setIsAddLessonOpen] = useState(false);
     const [activeModuleId, setActiveModuleId] = useState(null);
+    const [editingLesson, setEditingLesson] = useState(null);
 
     const handleAddModule = () => {
         const newModuleId = modules.length + 1;
         setModules([...modules, {
             id: newModuleId,
-            title: `Module ${newModuleId}`,
+            title: "",
             description: "",
             lessons: []
         }]);
@@ -24,8 +25,9 @@ export default function CurriculumEditor({ modules, setModules }) {
         setModules(modules.filter(m => m.id !== moduleId));
     };
 
-    const openAddLessonDialog = (moduleId) => {
+    const openAddLessonDialog = (moduleId, lesson = null) => {
         setActiveModuleId(moduleId);
+        setEditingLesson(lesson);
         setIsAddLessonOpen(true);
     };
 
@@ -34,25 +36,43 @@ export default function CurriculumEditor({ modules, setModules }) {
 
         setModules(modules.map(module => {
             if (module.id === activeModuleId) {
-                return {
-                    ...module,
-                    lessons: [
+                const isEditing = !!editingLesson;
+                const updatedLessons = isEditing
+                    ? module.lessons.map(l => l.id === editingLesson.id ? {
+                        ...l,
+                        videoTitle: lessonData.title,
+                        lessonTitle: lessonData.title,
+                        description: lessonData.description,
+                        duration: lessonData.duration || l.duration,
+                        libraryVideo: lessonData.libraryVideo,
+                        videoId: lessonData.libraryVideo?.bunnyVideoId || l.videoId,
+                        libraryId: lessonData.libraryVideo?.bunnyLibraryId || l.libraryId,
+                        lessonDuration: lessonData.libraryVideo?.duration || l.lessonDuration,
+                        resources: lessonData.resources || [],
+                        newResources: lessonData.newResources || [],
+                    } : l)
+                    : [
                         ...module.lessons,
                         {
-                            id: Date.now(), // Temporary ID
+                            id: Date.now(),
                             videoTitle: lessonData.title,
-                            videoId: null, // Will be set after upload
-                            type: 'video', // Visual flag
-                            duration: lessonData.duration || 0, // Gets the exact duration parsed by the frontend
-                            hasResources: lessonData.resources && lessonData.resources.length > 0,
-                            resources: (lessonData.resources || []).map(rObj => ({
-                                title: rObj.title,
-                                url: null, // Will be set after upload
-                                file: rObj.file // Grabs the precise File object to prevent double-nesting
-                            })),
-                            videoFile: lessonData.video, // For preview/upload
+                            lessonTitle: lessonData.title,
+                            description: lessonData.description,
+                            type: 'video',
+                            duration: lessonData.duration || 0,
+                            hasResources: lessonData.newResources && lessonData.newResources.length > 0,
+                            resources: [], // Existing resources
+                            newResources: lessonData.newResources || [],
+                            libraryVideo: lessonData.libraryVideo,
+                            videoId: lessonData.libraryVideo?.bunnyVideoId,
+                            libraryId: lessonData.libraryVideo?.bunnyLibraryId,
+                            lessonDuration: lessonData.libraryVideo?.duration || 0,
                         }
-                    ]
+                    ];
+
+                return {
+                    ...module,
+                    lessons: updatedLessons
                 };
             }
             return module;
@@ -113,8 +133,8 @@ export default function CurriculumEditor({ modules, setModules }) {
                                                 newModules[index].description = e.target.value;
                                                 setModules(newModules);
                                             }}
-                                            placeholder="Add module description (optional)..."
-                                            className="text-sm text-slate-500 bg-transparent border-none outline-none focus:ring-0 p-0 w-full placeholder:text-slate-300"
+                                            placeholder="Add module description here..."
+                                            className="text-sm text-slate-500 bg-transparent border-none outline-none focus:ring-0 p-0 w-full placeholder:text-slate-400"
                                         />
                                     </div>
                                 </div>
@@ -134,14 +154,18 @@ export default function CurriculumEditor({ modules, setModules }) {
                                     </div>
                                 )}
                                 {module.lessons.map((lesson) => (
-                                    <div key={lesson.id} className="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 group transition-colors">
+                                    <div
+                                        key={lesson.id}
+                                        onClick={() => openAddLessonDialog(module.id, lesson)}
+                                        className="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 group transition-colors cursor-pointer"
+                                    >
                                         <div className="flex items-center gap-3">
                                             <VideoIcon size={16} className="text-blue-500" />
                                             <span className="text-sm font-medium text-slate-700">{lesson.videoTitle || lesson.title}</span>
-                                            {lesson.hasResources && (
+                                            {(lesson.hasResources || (lesson.resources && lesson.resources.length > 0)) && (
                                                 <div className="flex items-center gap-1 ml-2 text-green-500">
                                                     <FileText size={14} />
-                                                    <span className="text-xs">{lesson.resources.length}</span>
+                                                    <span className="text-xs">{(lesson.resources?.length || 0) + (lesson.newResources?.length || 0)}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -175,6 +199,7 @@ export default function CurriculumEditor({ modules, setModules }) {
                 open={isAddLessonOpen}
                 onOpenChange={setIsAddLessonOpen}
                 onSave={handleSaveLesson}
+                lesson={editingLesson}
             />
         </div>
     )

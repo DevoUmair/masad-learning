@@ -9,6 +9,7 @@ import CurriculumEditor from './_components/CurriculumEditor';
 import SettingsForm from './_components/SettingsForm';
 import { useCreateCourseMutation, useGetCourseByIdQuery, useEditCourseMutation } from '@/redux/course/courseApi';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function CourseEditorPage({ params }) {
     const { id } = use(params);
@@ -80,9 +81,8 @@ export default function CourseEditorPage({ params }) {
                         libraryId: l.libraryId,
                         lessonDuration: l.lessonDuration || 0,
                         resources: (l.resources || []).map(r => {
-                            // Resources are already ObjectIds on server
-                            if (typeof r === 'string') return r;
-                            return r._id || r;
+                            // Keep full resource objects (title, url, etc.)
+                            return r;
                         }),
                         // No videoFile since it's already uploaded
                         videoFile: null,
@@ -100,7 +100,7 @@ export default function CourseEditorPage({ params }) {
 
     const handleSave = async () => {
         if (!courseData.title) {
-            alert("Course title is required.");
+            toast.error("Course title is required.");
             setActiveTab('basic');
             return;
         }
@@ -138,10 +138,15 @@ export default function CourseEditorPage({ params }) {
                     // Keep existing video data for edit mode
                     if (l.videoId) lessonMap.videoId = l.videoId;
                     if (l.libraryId) lessonMap.libraryId = l.libraryId;
+                    if (l.libraryVideo) lessonMap.libraryVideo = l.libraryVideo;
+                    if (l.isExisting) lessonMap.isExisting = true;
+                    if (l.id) lessonMap.id = l.id;
 
                     // Keep existing resource ObjectIds
                     if (l.resources && l.resources.length > 0) {
-                        lessonMap.resources = l.resources.filter(r => typeof r === 'string' && r.match(/^[0-9a-fA-F]{24}$/));
+                        lessonMap.resources = l.resources
+                            .map(r => (typeof r === 'string' ? r : (r._id || r)))
+                            .filter(id => typeof id === 'string' && id.match(/^[0-9a-fA-F]{24}$/));
                     }
 
                     // Only append new video files
@@ -150,9 +155,14 @@ export default function CourseEditorPage({ params }) {
                     }
 
                     // Only append new resource files
-                    if (l.resources && l.resources.length > 0) {
+                    const combinedResources = [
+                        ...(l.resources || []),
+                        ...(l.newResources || [])
+                    ];
+
+                    if (combinedResources.length > 0) {
                         let newResIdx = 0;
-                        l.resources.forEach((rObj) => {
+                        combinedResources.forEach((rObj) => {
                             if (rObj.file) {
                                 formData.append(`resource_${mIndex}_${lIndex}_${newResIdx}`, rObj.file);
                                 formData.append(`resourceTitle_${mIndex}_${lIndex}_${newResIdx}`, rObj.title || rObj.file.name);
@@ -175,12 +185,12 @@ export default function CourseEditorPage({ params }) {
             }
 
             if (res.success) {
-                alert(isNew ? "Course created successfully!" : "Course updated successfully!");
+                toast.success(isNew ? "Course created successfully!" : "Course updated successfully!");
                 router.push('/dashboard/instructor/courses');
             }
         } catch (error) {
             console.error("Failed to save course:", error);
-            alert(error?.data?.message || "Failed to save course. Please try again.");
+            toast.error(error?.data?.message || "Failed to save course. Please try again.");
         }
     };
 

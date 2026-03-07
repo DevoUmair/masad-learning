@@ -7,7 +7,7 @@ import VideoPlayer from '../_components/VideoPlayer';
 import LessonInfo from '../_components/LessonInfo';
 import { useGetCourseByIdQuery } from '@/redux/course/courseApi';
 import { useGetCourseProgressQuery } from '@/redux/student/studentAPi';
-import { Loader2, PlayCircle, Clock, Download, Award, Infinity as InfinityIcon, CheckCircle2, BookOpen } from 'lucide-react';
+import { Loader2, PlayCircle, Clock, Download, Award, Infinity as InfinityIcon, CheckCircle2, BookOpen, FileText } from 'lucide-react';
 import { useParams } from 'next/navigation';
 
 export default function CoursePlayerPage() {
@@ -289,16 +289,43 @@ export default function CoursePlayerPage() {
                             </TabsContent>
                             <TabsContent value="resources" className="space-y-4">
                                 {activeLesson?.resources?.length > 0 ? (
-                                    <div className="space-y-3">
-                                        {activeLesson.resources.map((res, i) => (
-                                            <a key={i} href={res.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:border-sPrimary transition-colors cursor-pointer">
-                                                <span>📄</span>
-                                                <span className="text-sm font-medium">{res.filename || `Resource ${i + 1}`}</span>
-                                            </a>
+                                    <div className="grid gap-3">
+                                        {activeLesson.resources.map((res) => (
+                                            <div
+                                                key={res._id || res.id}
+                                                className="flex items-center justify-between bg-white border border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className="bg-red-50 text-red-600 p-2.5 rounded-lg border border-red-100">
+                                                        <FileText size={20} />
+                                                    </div>
+
+                                                    <div>
+                                                        <p className="text-sm font-bold text-slate-900">
+                                                            {res.title || "Resource File"}
+                                                        </p>
+                                                        <p className="text-xs text-slate-500">
+                                                            Lesson Material
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <a
+                                                    href={res.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-1.5 px-4 py-2 bg-slate-50 hover:bg-slate-100 text-sPrimary text-xs font-bold rounded-lg border border-slate-200 transition-colors"
+                                                >
+                                                    <Download size={14} />
+                                                    View / Download
+                                                </a>
+                                            </div>
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="text-slate-500 italic">No additional resources for this lesson.</div>
+                                    <div className="bg-slate-50 border border-dashed border-slate-200 rounded-xl p-8 text-center">
+                                        <p className="text-slate-500 italic text-sm">No additional resources are attached to this lesson.</p>
+                                    </div>
                                 )}
                             </TabsContent>
                         </Tabs>

@@ -7,6 +7,7 @@ export const studentApi = baseApi.injectEndpoints({
                 url: `/students/enroll-course/${courseId}`,
                 method: 'POST',
             }),
+            invalidatesTags: ['EnrolledCourses'],
         }),
         getEnrolledCourses: builder.query({
             query: () => ({
