@@ -9,8 +9,6 @@ const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
     credentials: 'include',
-    // We don't need withCredentials here for the baseQuery if we manually attach the token,
-    // but if your refresh token relies on cookies, you need it for the specific refresh endpoint.
     prepareHeaders: (headers, { getState }) => {
         const token = getState().auth.accessToken;
         if (token) {
@@ -31,7 +29,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
             const release = await mutex.acquire();
             try {
                 // Attempt to refresh the token
-                // NOTE: This endpoint MUST send cookies (withCredentials) if your refresh token is in an HttpOnly cookie
                 const refreshResult = await baseQuery(
                     { url: '/users/refresh-token', method: 'POST', credentials: 'include' },
                     api,
@@ -42,7 +39,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
                     // Store the new token
                     api.dispatch(setCredentials({
                         accessToken: refreshResult.data.accessToken,
-                        user: refreshResult.data.user // Assuming refresh returns user too
+                        user: refreshResult.data.user
                     }));
 
                     // Retry the initial query with the new token
@@ -50,7 +47,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
                 } else {
                     // Refresh failed, log out
                     api.dispatch(logOut());
-                    // In a Next.js app, you might want to redirect here, but doing it in a component or middleware is cleaner
                 }
             } finally {
                 // Release must be called once the mutex should be released again
@@ -67,6 +63,18 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const baseApi = createApi({
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Library', 'EnrolledCourses', 'CourseProgress'], // Enable cache invalidation
-    endpoints: () => ({}), // We'll inject endpoints later
+    tagTypes: [
+        'Library',
+        'EnrolledCourses',
+        'CourseProgress',
+        'AdminInstructorProfile',
+        'AdminStats',
+        'Category',
+        'EnrolledStudents',
+        'StudentProfile',
+        'InstructorStats',
+        'Certificate',
+        'Course'
+    ],
+    endpoints: () => ({}),
 });

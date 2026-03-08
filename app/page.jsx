@@ -19,7 +19,7 @@ export default function Home() {
       {/* <Banner /> */}
       <HeroBanner />
       <AboutUs />
-      <BunnyVideo libraryId="611020" videoId="2f499b29-1665-4981-abc7-8035cf5cd9a5" apiKey="adf8c59c-06ad-4254-a50f0b3e84e4-bbb6-4a6f" />
+      {/* <BunnyVideo libraryId="611020" videoId="2f499b29-1665-4981-abc7-8035cf5cd9a5" apiKey="adf8c59c-06ad-4254-a50f0b3e84e4-bbb6-4a6f" /> */}
       <WelcomeMasad />
       {/* <FeaturedCourse /> */}
       <WhoWe />

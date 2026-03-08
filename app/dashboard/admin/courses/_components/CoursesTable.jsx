@@ -1,6 +1,8 @@
-"use client";
-import React from 'react';
-import { Star, MoreVertical, Eye, BookOpen, List } from 'lucide-react';
+import React, { useState } from 'react';
+import { toast } from 'sonner';
+import DeleteConfirmationModal from '@/app/dashboard/_components/DeleteConfirmationModal';
+import { Star, MoreVertical, Eye, BookOpen, List, Trash2 } from 'lucide-react';
+import { useDeleteCourseMutation } from '@/redux/course/courseApi';
 import Link from 'next/link';
 import {
     Table,
@@ -21,8 +23,34 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function CoursesTable({ courses }) {
+    const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCourseId, setSelectedCourseId] = useState(null);
+
+    const handleDeleteClick = (courseId) => {
+        setSelectedCourseId(courseId);
+        setIsModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            await deleteCourse(selectedCourseId).unwrap();
+            setIsModalOpen(false);
+            toast.success("Course deleted successfully");
+        } catch (err) {
+            console.error("Deletion failed:", err);
+            toast.error("Failed to delete course: " + (err.data?.message || err.message));
+        }
+    };
+
     return (
         <div className="bg-white rounded-xl border border-slate-200 overflow-y-auto shadow-sm overflow-hidden flex-1 ">
+            <DeleteConfirmationModal
+                isOpen={isModalOpen}
+                isLoading={isDeleting}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+            />
             <div className="overflow-x-auto ">
                 <Table>
                     <TableHeader className="bg-slate-50">
@@ -98,8 +126,9 @@ export default function CoursesTable({ courses }) {
                                             </DropdownMenuItem>
 
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-red-600">
-                                                Suspend Course
+
+                                            <DropdownMenuItem onClick={() => handleDeleteClick(course.id)} className="text-red-600 focus:bg-red-50 focus:text-red-600 cursor-pointer">
+                                                <Trash2 className="mr-2 h-4 w-4" /> Delete Course
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>

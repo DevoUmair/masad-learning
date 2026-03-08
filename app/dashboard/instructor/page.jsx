@@ -4,8 +4,21 @@ import { Users, Banknote, Star, Search, PenLine, Book, TrendingUp, ChevronLeft, 
 import Link from 'next/link';
 import StatCard from './_components/StatCard';
 import CourseRow from './_components/CourseRow';
+import { useGetInstructorStatsQuery } from '@/redux/instructor/instructorApi';
 
 export default function InstructorDashboard() {
+    const { data: statsData, isLoading, error } = useGetInstructorStatsQuery();
+
+    if (isLoading) return <div className="p-8 text-center text-slate-500 font-lexend">Loading dashboard stats...</div>;
+    if (error) return <div className="p-8 text-center text-red-500 font-lexend">Error loading dashboard stats</div>;
+
+    const { stats } = statsData || {};
+
+    const formatTrend = (label) => {
+        // Mock trend for now as it's not in backend yet
+        return "+0% from last month";
+    };
+
     return (
         <div className="space-y-8 font-lexend">
             <div>
@@ -17,8 +30,8 @@ export default function InstructorDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <StatCard
                     label="TOTAL STUDENTS"
-                    value="1,240"
-                    trend="+12% from last month"
+                    value={stats?.totalStudents?.toLocaleString() || "0"}
+                    trend={formatTrend("students")}
                     icon={Users}
                     iconColor="text-blue-600"
                     iconBg="bg-blue-50"
@@ -26,8 +39,8 @@ export default function InstructorDashboard() {
                 />
                 <StatCard
                     label="TOTAL REVENUE (AED)"
-                    value="45,200"
-                    trend="+8.4% growth"
+                    value={stats?.totalEarnings?.toLocaleString() || "0"}
+                    trend={formatTrend("revenue")}
                     icon={Banknote}
                     iconColor="text-green-600"
                     iconBg="bg-green-50"
@@ -35,8 +48,8 @@ export default function InstructorDashboard() {
                 />
                 <StatCard
                     label="AVERAGE RATING"
-                    value="4.8"
-                    trend="+0.2 from 4.6 avg"
+                    value={stats?.averageRating?.toFixed(1) || "0.0"}
+                    trend={formatTrend("rating")}
                     icon={Star}
                     iconColor="text-yellow-500"
                     iconBg="bg-yellow-50"
@@ -65,40 +78,27 @@ export default function InstructorDashboard() {
                                 <th className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
                                 <th className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Enrollees</th>
                                 <th className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Revenue (AED)</th>
-                                {/* <th className="text-right py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th> */}
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            <CourseRow
-                                title="Professional Management 101"
-                                updated="Updated 2 days ago"
-                                category="Business"
-                                status="Published"
-                                enrollees="842"
-                                revenue="22,400"
-                                icon={Book}
-                                color="bg-blue-100 text-blue-600"
-                            />
-                            <CourseRow
-                                title="Introduction to AI Ethics"
-                                updated="Created 1 week ago"
-                                category="Technology"
-                                status="Draft"
-                                enrollees="0"
-                                revenue="0"
-                                icon={Book} // Using generic book icon, ideally use distinct ones
-                                color="bg-indigo-100 text-indigo-600"
-                            />
-                            <CourseRow
-                                title="UI Design Fundamentals"
-                                updated="Updated 5 hours ago"
-                                category="Design"
-                                status="Published"
-                                enrollees="398"
-                                revenue="12,800"
-                                icon={Book}
-                                color="bg-red-100 text-red-600"
-                            />
+                            {stats?.courses?.slice(0, 5).map((course) => (
+                                <CourseRow
+                                    key={course.id}
+                                    title={course.title}
+                                    updated={`Updated ${new Date(course.updatedAt).toLocaleDateString()}`}
+                                    category={course.category}
+                                    status={course.status}
+                                    enrollees={course.enrollees.toString()}
+                                    revenue={course.revenue.toLocaleString()}
+                                    icon={Book}
+                                    color="bg-blue-100 text-blue-600"
+                                />
+                            ))}
+                            {stats?.courses?.length === 0 && (
+                                <tr>
+                                    <td colSpan="5" className="py-8 text-center text-slate-500">No courses found yet.</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

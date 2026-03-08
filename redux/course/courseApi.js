@@ -6,19 +6,18 @@ export const courseApi = baseApi.injectEndpoints({
             query: (courseData) => ({
                 url: '/courses',
                 method: 'POST',
-                // When using FormData, Redux Toolkit Query will automatically figure out and set the correct Content-Type (multipart/form-data)
-                // and boundary if body is an instance of FormData
                 body: courseData,
             }),
+            invalidatesTags: ['Course'],
         }),
 
         getCourses: builder.query({
-            // Accept a params object so you can easily add more filters later
             query: (params = {}) => ({
                 url: '/courses',
                 method: 'GET',
                 params: params,
             }),
+            providesTags: ['Course'],
         }),
         approveCourse: builder.mutation({
             query: ({ id, price }) => ({
@@ -26,12 +25,14 @@ export const courseApi = baseApi.injectEndpoints({
                 method: 'PUT',
                 body: { price },
             }),
+            invalidatesTags: ['Course'],
         }),
         getInstructorCourses: builder.query({
             query: (id) => ({
                 url: `/courses/${id}/instructor`,
                 method: 'GET',
             }),
+            providesTags: ['Course'],
         }),
         getCourseById: builder.query({
             query: (id) => ({
@@ -45,9 +46,17 @@ export const courseApi = baseApi.injectEndpoints({
                 method: 'PUT',
                 body: formData,
             }),
+            invalidatesTags: ['Course'],
+        }),
+        deleteCourse: builder.mutation({
+            query: (id) => ({
+                url: `/courses/${id}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Course'],
         }),
     }),
     overrideExisting: false,
 });
 
-export const { useCreateCourseMutation, useGetCoursesQuery, useApproveCourseMutation, useGetInstructorCoursesQuery, useGetCourseByIdQuery, useEditCourseMutation } = courseApi;
+export const { useCreateCourseMutation, useGetCoursesQuery, useApproveCourseMutation, useGetInstructorCoursesQuery, useGetCourseByIdQuery, useEditCourseMutation, useDeleteCourseMutation } = courseApi;

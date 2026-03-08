@@ -16,6 +16,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import VideoModal from './_components/VideoModal';
+import DeleteConfirmationModal from '@/app/dashboard/_components/DeleteConfirmationModal';
 
 const VideoLibraryPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -23,15 +24,22 @@ const VideoLibraryPage = () => {
     const [selectedVideo, setSelectedVideo] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { data: libraryData, isLoading: loading } = useGetLibraryVideosQuery();
-    const [deleteLibraryVideo] = useDeleteLibraryVideoMutation();
+    const [deleteLibraryVideo, { isLoading: isDeleting }] = useDeleteLibraryVideoMutation();
+
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [videoToDeleteId, setVideoToDeleteId] = useState(null);
 
     const videos = libraryData?.data || [];
 
-    const handleDelete = async (id) => {
-        if (!confirm("Are you sure you want to delete this video from the library and Bunny.net?")) return;
+    const handleDelete = (id) => {
+        setVideoToDeleteId(id);
+        setIsDeleteModalOpen(true);
+    };
 
+    const handleConfirmDelete = async () => {
         try {
-            await deleteLibraryVideo(id).unwrap();
+            await deleteLibraryVideo(videoToDeleteId).unwrap();
+            setIsDeleteModalOpen(false);
             toast.success("Video deleted");
         } catch (error) {
             console.error("Error deleting video:", error);
@@ -116,7 +124,10 @@ const VideoLibraryPage = () => {
                                         variant="destructive"
                                         size="icon"
                                         className="h-8 w-8"
-                                        onClick={() => handleDelete(video._id)}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(video._id);
+                                        }}
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </Button>
@@ -148,6 +159,13 @@ const VideoLibraryPage = () => {
                     </Button>
                 </div>
             )}
+            <DeleteConfirmationModal
+                isOpen={isDeleteModalOpen}
+                isLoading={isDeleting}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+                title="Delete Video"
+            />
             <VideoModal
                 open={isModalOpen}
                 onOpenChange={setIsModalOpen}

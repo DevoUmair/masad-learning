@@ -37,6 +37,7 @@ export default function BasicInfoForm({ data, onChange }) {
                         value={data.category}
                         onChange={e => onChange('category', e.target.value)}
                         className="w-full h-10 px-3 rounded-md border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-sPrimary/20 cursor-pointer">
+                        <option value="">Select Category</option>
                         {categories?.categories?.map((category) => (
                             <option key={category._id} value={category._id}>
                                 {category.name}
@@ -83,15 +84,7 @@ export default function BasicInfoForm({ data, onChange }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                     <label className="text-sm font-bold text-slate-900">Course Includes (Features)</label>
-                    <label className="flex items-center gap-3">
-                        <input
-                            type="checkbox"
-                            checked={data.fullLifetimeAccess}
-                            onChange={(e) => onChange('fullLifetimeAccess', e.target.checked)}
-                            className="size-4 rounded mt-2 border-slate-300 text-sPrimary focus:ring-sPrimary cursor-pointer"
-                        />
-                        <span className="text-sm text-slate-700 font-medium">Full Lifetime Access</span>
-                    </label>
+
                     <label className="flex items-center gap-3">
                         <input
                             type="checkbox"

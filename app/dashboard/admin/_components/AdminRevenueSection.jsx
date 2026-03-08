@@ -18,7 +18,7 @@ const revenueData = [
     { name: 'Dec', revenue: 8500 },
 ];
 
-export default function AdminRevenueSection() {
+export default function AdminRevenueSection({ data = [] }) {
     return (
         <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-6">
@@ -31,7 +31,7 @@ export default function AdminRevenueSection() {
                     <option>Last Year</option>
                 </select>
             </div>
-            <RevenueChart data={revenueData} />
+            <RevenueChart data={data} />
         </div>
     );
 }

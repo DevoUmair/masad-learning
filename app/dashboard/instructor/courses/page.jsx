@@ -4,7 +4,10 @@ import { Search, Plus, Filter, Book, PenLine, Trash2, Loader2 } from 'lucide-rea
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
-import { useGetInstructorCoursesQuery } from '@/redux/course/courseApi';
+import { useGetInstructorCoursesQuery, useDeleteCourseMutation } from '@/redux/course/courseApi';
+import { toast } from 'sonner';
+import { useState } from 'react';
+import DeleteConfirmationModal from '@/app/dashboard/_components/DeleteConfirmationModal';
 
 export default function MyCoursesPage() {
     const user = useSelector((state) => state.auth.user);
@@ -13,10 +16,39 @@ export default function MyCoursesPage() {
         skip: !user?._id,
     });
 
+    const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCourseId, setSelectedCourseId] = useState(null);
+
+    const handleDeleteClick = (courseId) => {
+        setSelectedCourseId(courseId);
+        setIsModalOpen(true);
+    };
+
+
+    const handleConfirmDelete = async () => {
+        try {
+            await deleteCourse(selectedCourseId).unwrap();
+            setIsModalOpen(false);
+            // Show a toast or subtle alert here
+            toast.success("Course deleted successfully");
+
+        } catch (err) {
+            console.error("Deletion failed:", err);
+            toast.error("Failed to delete course: " + (err.data?.message || err.message));
+        }
+    };
     const courses = coursesData?.courses || [];
 
     return (
         <div className="space-y-6 font-lexend">
+            <DeleteConfirmationModal
+                isOpen={isModalOpen}
+                isLoading={isDeleting}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+            />
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-black text-slate-900">My Courses</h1>
@@ -128,7 +160,7 @@ export default function MyCoursesPage() {
                                                         <PenLine size={18} />
                                                     </button>
                                                 </Link>
-                                                <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer" title="Delete">
+                                                <button onClick={() => handleDeleteClick(course._id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer" title="Delete">
                                                     <Trash2 size={18} />
                                                 </button>
                                             </div>
