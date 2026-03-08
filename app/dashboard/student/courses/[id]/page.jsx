@@ -120,109 +120,120 @@ export default function CoursePlayerPage() {
 
                         {/* Tabs content */}
                         <Tabs defaultValue="overview" className="w-full">
-                            <TabsList className="w-full justify-start h-auto p-0 bg-transparent gap-4 mb-8 border-b border-slate-200 pb-1">
-                                <TabsTrigger value="overview" className="rounded-none border-b-2 border-transparent data-[state=active]:border-sPrimary data-[state=active]:text-sPrimary px-4 py-2 font-bold bg-transparent shadow-none transition-all cursor-pointer">Overview</TabsTrigger>
-                                <TabsTrigger value="resources" className="rounded-none border-b-2 border-transparent data-[state=active]:border-sPrimary data-[state=active]:text-sPrimary px-4 py-2 font-bold bg-transparent shadow-none transition-all cursor-pointer">Resources</TabsTrigger>
+                            <TabsList className="w-full justify-start h-auto p-0 bg-transparent gap-8 mb-8 border-b border-slate-200">
+                                <TabsTrigger
+                                    value="overview"
+                                    className="relative rounded-none border-b-2 border-transparent data-[state=active]:bg-sPrimary data-[state=active]:text-white px-1 py-4 font-bold bg-transparent shadow-none transition-all cursor-pointer text-slate-500 hover:text-slate-700"
+                                >
+                                    Overview
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="resources"
+                                    className="relative rounded-none border-b-2 border-transparent data-[state=active]:bg-sPrimary data-[state=active]:text-white px-1 py-4 font-bold bg-transparent shadow-none transition-all cursor-pointer text-slate-500 hover:text-slate-700"
+                                >
+                                    Resources
+                                    {activeLesson?.resources?.length > 0 && (
+                                        <span className="ml-2 bg-sPrimary/10 text-sPrimary text-[10px] px-1.5 py-0.5 rounded-full">
+                                            {activeLesson.resources.length}
+                                        </span>
+                                    )}
+                                </TabsTrigger>
                             </TabsList>
 
-                            <TabsContent value="overview" className="space-y-6">
-                                {/* {activeLesson && (
-                                    <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
-                                        <h3 className="font-bold text-xl mb-3 text-slate-900">{activeLesson.videoTitle || activeLesson.title || "Lesson Overview"}</h3>
-                                        <p className="text-slate-600 leading-relaxed whitespace-pre-line">
-                                            {activeLesson.lessonDescription || "No description provided for this lesson."}
-                                        </p>
-                                    </div>
-                                )} */}
+                            <TabsContent value="overview" className="space-y-8 animate-in fade-in duration-500">
                                 {activeLesson && (
-                                    <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-300">
-
-                                        {/* Header */}
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className="bg-blue-50 text-blue-600 p-2 rounded-lg">
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="w-5 h-5"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                >
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 16V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2h12l4 4z" />
-                                                </svg>
+                                    <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="bg-sPrimary/10 text-sPrimary p-2.5 rounded-xl">
+                                                <BookOpen size={24} />
                                             </div>
-
-                                            <h3 className="font-semibold text-xl md:text-2xl text-slate-900">
-                                                {activeLesson.videoTitle || activeLesson.title || "Lesson Overview"}
-                                            </h3>
+                                            <div>
+                                                <p className="text-xs font-bold text-sPrimary uppercase tracking-wider mb-0.5">Current Lesson</p>
+                                                <h3 className="font-bold text-xl md:text-2xl text-slate-900 leading-tight">
+                                                    {activeLesson.videoTitle || activeLesson.title || "Lesson Overview"}
+                                                </h3>
+                                            </div>
                                         </div>
 
-                                        {/* Divider */}
-                                        <div className="h-px bg-slate-200 mb-4"></div>
-
-                                        {/* Description */}
-                                        <p className="text-slate-600 leading-relaxed text-[15px] md:text-base whitespace-pre-line">
-                                            {activeLesson.lessonDescription || "No description provided for this lesson."}
-                                        </p>
-
+                                        <div className="prose prose-slate max-w-none">
+                                            <p className="text-slate-600 leading-relaxed text-[15px] md:text-base whitespace-pre-line bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                                                {activeLesson.lessonDescription || "No description provided for this lesson."}
+                                            </p>
+                                        </div>
                                     </div>
                                 )}
-                                <div>
-                                    <h3 className="font-bold text-lg mb-3">About this course</h3>
-                                    <p className="text-slate-600 leading-relaxed whitespace-pre-wrap mb-6">
-                                        {courseData.description || "No description provided."}
-                                    </p>
+                                <div className="space-y-8">
+                                    <section>
+                                        <h3 className="font-bold text-xl mb-4 text-slate-900 flex items-center gap-2">
+                                            <div className="w-1.5 h-6 bg-sPrimary rounded-full"></div>
+                                            About this course
+                                        </h3>
+                                        <p className="text-slate-600 leading-relaxed text-base whitespace-pre-wrap">
+                                            {courseData.description || "No description provided."}
+                                        </p>
 
-                                    {/* Course Info Grid */}
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-slate-200">
-                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                            <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Category</p>
-                                            <p className="font-semibold text-slate-900">{courseData.category?.name || "Not specified"}</p>
+                                        {/* Course Info Grid */}
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                                            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col gap-1">
+                                                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Category</p>
+                                                <p className="font-bold text-slate-900">{courseData.category?.name || "Not specified"}</p>
+                                            </div>
+                                            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col gap-1">
+                                                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Level</p>
+                                                <p className="font-bold text-slate-900">{courseData.level || "All Levels"}</p>
+                                            </div>
+                                            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col gap-1">
+                                                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Instructor</p>
+                                                <p className="font-bold text-slate-900 line-clamp-1">{courseData.instructor?.name || "Unknown"}</p>
+                                                {courseData.instructor?.email && <p className="text-[10px] text-slate-400 font-medium truncate">{courseData.instructor.email}</p>}
+                                            </div>
                                         </div>
-                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                            <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Level</p>
-                                            <p className="font-semibold text-slate-900">{courseData.level || "All Levels"}</p>
-                                        </div>
-                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                            <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Instructor</p>
-                                            <p className="font-semibold text-slate-900">{courseData.instructor?.name || "Unknown"}</p>
-                                            {courseData.instructor?.email && <p className="text-xs text-slate-500 mt-0.5">{courseData.instructor.email}</p>}
-                                        </div>
-                                    </div>
+                                    </section>
 
                                     {/* Course Includes */}
-                                    <div className="pt-6 mt-6 border-t border-slate-200">
-                                        <h3 className="font-bold text-lg mb-4">Course Includes</h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                            <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-xl border border-blue-100">
-                                                <Clock size={20} className="text-blue-600 shrink-0" />
+                                    <section className="bg-slate-900 p-8 rounded-3xl text-white">
+                                        <h3 className="font-bold text-xl mb-6 flex items-center gap-2">
+                                            What's included in Masad
+                                        </h3>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                            <div className="flex flex-col gap-2">
+                                                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                                                    <Clock size={20} className="text-blue-400" />
+                                                </div>
                                                 <div>
-                                                    <p className="text-sm font-bold text-slate-900">{courseData.courseIncludes?.totalVideoHours || 0} Hours</p>
-                                                    <p className="text-xs text-slate-500">Video Content</p>
+                                                    <p className="text-lg font-bold">{courseData.courseIncludes?.totalVideoHours || 0} Hours</p>
+                                                    <p className="text-[10px] text-white/50 uppercase font-bold tracking-widest">On-demand Video</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-3 bg-green-50 p-3 rounded-xl border border-green-100">
-                                                <Download size={20} className="text-green-600 shrink-0" />
+                                            <div className="flex flex-col gap-2">
+                                                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                                                    <Download size={20} className="text-emerald-400" />
+                                                </div>
                                                 <div>
-                                                    <p className="text-sm font-bold text-slate-900">{courseData.courseIncludes?.downloadableResources || 0} Files</p>
-                                                    <p className="text-xs text-slate-500">Resources</p>
+                                                    <p className="text-lg font-bold">{courseData.courseIncludes?.downloadableResources || 0} Files</p>
+                                                    <p className="text-[10px] text-white/50 uppercase font-bold tracking-widest">Resources</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-3 bg-purple-50 p-3 rounded-xl border border-purple-100">
-                                                <InfinityIcon size={20} className="text-purple-600 shrink-0" />
+                                            <div className="flex flex-col gap-2">
+                                                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                                                    <InfinityIcon size={20} className="text-purple-400" />
+                                                </div>
                                                 <div>
-                                                    <p className="text-sm font-bold text-slate-900">{courseData.courseIncludes?.fullLifetimeAccess !== false ? 'Yes' : 'No'}</p>
-                                                    <p className="text-xs text-slate-500">Lifetime Access</p>
+                                                    <p className="text-lg font-bold">{courseData.courseIncludes?.fullLifetimeAccess !== false ? 'Lifetime' : 'Limited'}</p>
+                                                    <p className="text-[10px] text-white/50 uppercase font-bold tracking-widest">Access</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-3 bg-amber-50 p-3 rounded-xl border border-amber-100">
-                                                <Award size={20} className="text-amber-600 shrink-0" />
+                                            <div className="flex flex-col gap-2">
+                                                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                                                    <Award size={20} className="text-amber-400" />
+                                                </div>
                                                 <div>
-                                                    <p className="text-sm font-bold text-slate-900">{courseData.courseIncludes?.certificateOfCompletion !== false ? 'Yes' : 'No'}</p>
-                                                    <p className="text-xs text-slate-500">Certificate</p>
+                                                    <p className="text-lg font-bold">{courseData.courseIncludes?.certificateOfCompletion !== false ? 'Verified' : 'None'}</p>
+                                                    <p className="text-[10px] text-white/50 uppercase font-bold tracking-widest">Certificate</p>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </section>
 
                                     {/* What You Will Learn */}
                                     {courseData.whatYouWillLearn?.length > 0 && (
@@ -241,71 +252,94 @@ export default function CoursePlayerPage() {
 
                                     {/* Module Overview */}
                                     {courseData.modules?.length > 0 && (
-                                        <div className="pt-6 mt-6 border-t border-slate-200">
-                                            <h3 className="font-bold text-lg mb-4">Curriculum Overview</h3>
-                                            <div className="space-y-3">
+                                        <section>
+                                            <h3 className="font-bold text-xl mb-6 flex items-center gap-2 text-slate-900">
+                                                <div className="w-1.5 h-6 bg-sPrimary rounded-full"></div>
+                                                Curriculum Details
+                                            </h3>
+                                            <div className="space-y-4">
                                                 {courseData.modules.map((module, mIdx) => (
-                                                    <div key={module._id || module.id || mIdx} className="bg-slate-50 rounded-xl border border-slate-100 overflow-hidden">
-                                                        <div className="p-4 flex items-center justify-between">
-                                                            <div>
-                                                                <p className="font-bold text-slate-900">Module {mIdx + 1}: {module.title}</p>
-                                                                {module.description && <p className="text-xs text-slate-500 mt-1">{module.description}</p>}
-                                                            </div>
-                                                            <div className="flex items-center gap-2 text-xs text-slate-500">
-                                                                <BookOpen size={14} />
-                                                                <span>{module.lessons?.length || 0} lessons</span>
-                                                                {module.moduleDuration > 0 && (
-                                                                    <>
-                                                                        <span>•</span>
-                                                                        <Clock size={14} />
-                                                                        <span>
-                                                                            {Math.floor(module.moduleDuration / 60)}:
-                                                                            {Math.floor(module.moduleDuration % 60).toString().padStart(2, "0")}
-                                                                        </span>
-                                                                    </>
-                                                                )}
+                                                    <div key={module._id || module.id || mIdx} className="bg-white rounded-2xl border border-slate-200 overflow-hidden group hover:border-sPrimary transition-colors">
+                                                        <div className="p-5 flex items-center justify-between bg-slate-50/50 group-hover:bg-sPrimary/5 transition-colors">
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center font-bold text-sPrimary shadow-sm">
+                                                                    {mIdx + 1}
+                                                                </div>
+                                                                <div>
+                                                                    <p className="font-bold text-slate-900 text-lg leading-tight">{module.title}</p>
+                                                                    <div className="flex items-center gap-3 mt-1 text-[10px] uppercase font-bold tracking-widest text-slate-400">
+                                                                        <span className="flex items-center gap-1"><BookOpen size={12} /> {module.lessons?.length || 0} Lessons</span>
+                                                                        {module.moduleDuration > 0 && (
+                                                                            <span className="flex items-center gap-1"><Clock size={12} /> {Math.floor(module.moduleDuration / 60)}h {Math.floor(module.moduleDuration % 60)}m</span>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div className="border-t border-slate-100">
+                                                        <div className="divide-y divide-slate-100">
                                                             {module.lessons?.map((lesson, lIdx) => (
-                                                                <div key={lesson._id || lesson.id || lIdx} className="px-4 py-2.5 flex items-center justify-between text-sm border-b border-slate-50 last:border-b-0 hover:bg-slate-100/50 transition-colors">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <PlayCircle size={14} className="text-blue-500 shrink-0" />
-                                                                        <span className="text-slate-700">{lesson.lessonTitle || lesson.videoTitle || lesson.title}</span>
+                                                                <div key={lesson._id || lesson.id || lIdx} className="px-6 py-4 flex items-center justify-between text-sm hover:bg-slate-50 transition-colors">
+                                                                    <div className="flex items-center gap-3">
+                                                                        <div className="w-2 h-2 rounded-full bg-slate-300"></div>
+                                                                        <span className="text-slate-700 font-medium">{lesson.lessonTitle || lesson.videoTitle || lesson.title}</span>
                                                                     </div>
-                                                                    <span className="text-slate-400 text-xs">
-                                                                        {Math.floor((lesson.lessonDuration || 0) / 60)}:
-                                                                        {Math.floor((lesson.lessonDuration || 0) % 60).toString().padStart(2, "0")}
-                                                                    </span>
+                                                                    <div className="flex items-center gap-4">
+                                                                        <span className="text-slate-400 font-mono text-xs">
+                                                                            {Math.floor((lesson.lessonDuration || 0) / 60)}:
+                                                                            {Math.floor((lesson.lessonDuration || 0) % 60).toString().padStart(2, "0")}
+                                                                        </span>
+                                                                        {completedLessonIds.includes(lesson._id || lesson.id) && (
+                                                                            <CheckCircle2 size={16} className="text-emerald-500" />
+                                                                        )}
+                                                                    </div>
                                                                 </div>
                                                             ))}
                                                         </div>
                                                     </div>
                                                 ))}
                                             </div>
-                                        </div>
+                                        </section>
                                     )}
                                 </div>
                             </TabsContent>
-                            <TabsContent value="resources" className="space-y-4">
+                            <TabsContent value="resources" className="space-y-6 animate-in fade-in duration-500">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="font-bold text-xl text-slate-900 flex items-center gap-2">
+                                        <Download size={22} className="text-sPrimary" />
+                                        Lesson Resources
+                                    </h3>
+                                    {activeLesson?.resources?.length > 0 && (
+                                        <span className="text-xs font-medium text-slate-500">
+                                            {activeLesson.resources.length} items available
+                                        </span>
+                                    )}
+                                </div>
+
                                 {activeLesson?.resources?.length > 0 ? (
-                                    <div className="grid gap-3">
+                                    <div className="grid gap-4">
                                         {activeLesson.resources.map((res) => (
                                             <div
                                                 key={res._id || res.id}
-                                                className="flex items-center justify-between bg-white border border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition"
+                                                className="group flex items-center justify-between bg-white border border-slate-200 rounded-2xl p-5 hover:border-sPrimary hover:shadow-md transition-all duration-300"
                                             >
-                                                <div className="flex items-center gap-3">
-                                                    <div className="bg-red-50 text-red-600 p-2.5 rounded-lg border border-red-100">
-                                                        <FileText size={20} />
+                                                <div className="flex items-center gap-4">
+                                                    <div className="bg-blue-50 text-blue-600 p-3 rounded-xl border border-blue-100 group-hover:bg-sPrimary group-hover:text-white transition-colors">
+                                                        <FileText size={24} />
                                                     </div>
 
                                                     <div>
-                                                        <p className="text-sm font-bold text-slate-900">
+                                                        <p className="text-base font-bold text-slate-900 group-hover:text-sPrimary transition-colors">
                                                             {res.title || "Resource File"}
                                                         </p>
-                                                        <p className="text-xs text-slate-500">
-                                                            Lesson Material
+                                                        <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                                                            <Clock size={12} />
+                                                            Added for this lesson
+                                                            {/* Add file extension badge if available in title */}
+                                                            {res.title?.split('.').length > 1 && (
+                                                                <span className="ml-2 px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase">
+                                                                    {res.title.split('.').pop()}
+                                                                </span>
+                                                            )}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -314,17 +348,21 @@ export default function CoursePlayerPage() {
                                                     href={res.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="flex items-center gap-1.5 px-4 py-2 bg-slate-50 hover:bg-slate-100 text-sPrimary text-xs font-bold rounded-lg border border-slate-200 transition-colors"
+                                                    className="flex items-center gap-2 px-5 py-2.5 bg-sPrimary text-white text-sm font-bold rounded-xl hover:bg-sPrimary/90 shadow-sm hover:shadow-md transition-all"
                                                 >
-                                                    <Download size={14} />
-                                                    View / Download
+                                                    <Download size={16} />
+                                                    Download
                                                 </a>
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="bg-slate-50 border border-dashed border-slate-200 rounded-xl p-8 text-center">
-                                        <p className="text-slate-500 italic text-sm">No additional resources are attached to this lesson.</p>
+                                    <div className="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-12 text-center">
+                                        <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <FileText size={32} className="text-slate-300" />
+                                        </div>
+                                        <h4 className="font-bold text-slate-900 mb-1">No resources found</h4>
+                                        <p className="text-slate-500 text-sm max-w-xs mx-auto">There are no additional downloadable materials attached to this specific lesson.</p>
                                     </div>
                                 )}
                             </TabsContent>

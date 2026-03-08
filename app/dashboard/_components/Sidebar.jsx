@@ -87,10 +87,7 @@ export function Sidebar({ className, navItems = [] }) {
                     <LogOut size={20} />
                     <span className="text-sm font-medium">Logout</span>
                 </button>
-                <button className="flex items-center gap-3 px-3 py-2.5 text-sPrimary hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
-                    <Settings2 size={20} />
-                    <span className="text-sm font-medium">Settings</span>
-                </button>
+
             </div>
         </div>
     );

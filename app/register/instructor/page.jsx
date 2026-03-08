@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useRegisterMutation } from '@/redux/auth/AuthApi';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '@/redux/auth/AuthSlice';
+import { toast } from 'sonner';
 
 export default function TeacherRegisterPage() {
     const router = useRouter();
@@ -49,9 +50,12 @@ export default function TeacherRegisterPage() {
                 role: 'instructor'
             }).unwrap();
             dispatch(setCredentials({ user: data.user, accessToken: data.accessToken }));
+            toast.success('Registration successful! Welcome to the faculty.');
             router.push('/dashboard/instructor');
         } catch (err) {
-            setError(err.data?.message || 'Registration failed');
+            const message = err.data?.message || 'Registration failed';
+            setError(message);
+            toast.error(message);
         }
     };
 

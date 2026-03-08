@@ -73,7 +73,6 @@ export default function AdminRecentActivity({ activities = [] }) {
                     </div>
                 ))}
             </div>
-            <button className="w-full text-center text-sm font-bold text-sPrimary mt-6 hover:underline">View All Activity</button>
         </div>
     );
 }

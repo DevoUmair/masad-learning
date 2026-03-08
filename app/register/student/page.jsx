@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useRegisterMutation } from '@/redux/auth/AuthApi';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '@/redux/auth/AuthSlice';
+import { toast } from 'sonner';
 
 export default function StudentRegisterPage() {
     const router = useRouter();
@@ -39,7 +40,9 @@ export default function StudentRegisterPage() {
         setError(null);
 
         if (!formData.terms) {
-            setError('You must agree to the Terms of Service and Privacy Policy.');
+            const message = 'You must agree to the Terms of Service and Privacy Policy.';
+            setError(message);
+            toast.error(message);
             return;
         }
 
@@ -53,9 +56,12 @@ export default function StudentRegisterPage() {
                 role: 'student'
             }).unwrap();
             dispatch(setCredentials({ user: data.user, accessToken: data.accessToken }));
+            toast.success('Account created! Welcome to Masad Learning.');
             router.push('/dashboard/student');
         } catch (err) {
-            setError(err.data?.message || 'Registration failed');
+            const message = err.data?.message || 'Registration failed';
+            setError(message);
+            toast.error(message);
         }
     };
 

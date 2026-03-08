@@ -52,33 +52,7 @@ export default function StudentDashboard() {
 
                 </div>
 
-                {/* Sidebar Area */}
-                <div className="space-y-6">
-                    {/* Recent Activity */}
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-slate-200 dark:border-gray-700">
-                        <h3 className="font-bold text-lg mb-4">Recent Activity</h3>
-                        <div className="space-y-6">
-                            {[
-                                { title: "Completed Lesson 2.4", course: "Strategic Leadership", time: "2 hours ago", icon: CheckCircle, color: "text-green-500 bg-green-50" },
-                                { title: "Earned Certificate", course: "Financial Analysis", time: "1 day ago", icon: Award, color: "text-purple-500 bg-purple-50" },
-                                { title: "Started New Course", course: "AI Fundamentals", time: "2 days ago", icon: PlayCircle, color: "text-blue-500 bg-blue-50" },
-                            ].map((item, i) => (
-                                <div key={i} className="flex gap-4">
-                                    <div className={cn("size-10 rounded-full flex items-center justify-center shrink-0", item.color)}>
-                                        <item.icon size={18} />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">{item.title}</p>
-                                        <p className="text-xs text-sSecondary mt-0.5">{item.course}</p>
-                                        <p className="text-[10px] text-slate-400 mt-1">{item.time}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
 
-                    </div>
-
-                </div>
             </div>
         </div>
     );

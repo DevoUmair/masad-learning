@@ -8,6 +8,7 @@ import NavBar from '../_components/NavBar';
 import { useLoginMutation } from '@/redux/auth/AuthApi';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '@/redux/auth/AuthSlice';
+import { toast } from 'sonner';
 
 export default function Login() {
     const router = useRouter();
@@ -23,6 +24,7 @@ export default function Login() {
         try {
             const data = await loginUser({ email, password }).unwrap();
             dispatch(setCredentials({ user: data.user, accessToken: data.accessToken }));
+            toast.success('Login successful! Welcome back.');
 
             const role = data.user.role;
             if (role === 'student') {
@@ -35,7 +37,9 @@ export default function Login() {
                 router.push('/');
             }
         } catch (err) {
-            setError(err.data?.message || 'Login failed');
+            const message = err.data?.message || 'Login failed';
+            setError(message);
+            toast.error(message);
         }
     }
     return (
