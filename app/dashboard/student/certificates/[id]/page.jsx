@@ -46,7 +46,7 @@ const pdfStyles = StyleSheet.create({
         width: 100,
         height: 100,
         objectFit: "contain",
-        marginBottom: 20,
+        marginBottom: 10,
     },
     academyText: {
         fontSize: 10,
@@ -59,14 +59,14 @@ const pdfStyles = StyleSheet.create({
     title: {
         fontSize: 36,
         color: "#2563eb",
-        fontFamily: "Times-Roman",
+        // fontFamily: "Times-Roman",
         fontWeight: "bold",
         marginBottom: 30,
     },
     subtitle: {
         fontSize: 14,
         color: "#64748b",
-        fontFamily: "Times-Roman",
+        // fontFamily: "Times-Roman",
         fontStyle: "italic",
         marginBottom: 15,
     },
@@ -121,7 +121,7 @@ const CertificatePDF = ({ certDetails, origin }) => (
 
                 <PdfImage src={`${origin}/logo/logo2.png`} style={pdfStyles.logo} />
 
-                <Text style={pdfStyles.academyText}>Masad Learning Academy</Text>
+                <Text style={pdfStyles.academyText}>Masad Learning</Text>
                 <Text style={pdfStyles.title}>Certificate of Completion</Text>
 
                 <Text style={pdfStyles.subtitle}>This is to certify that</Text>
@@ -251,10 +251,10 @@ export default function CertificateDetail() {
                             </h4>
 
                             <div className="mt-10 md:mt-10 flex items-center justify-center w-full px-8 md:px-16">
-                                <div className="text-left absolute bottom-8 left-12">
+                                {/* <div className="hidden md:block text-left absolute bottom-8 left-12">
                                     <p className="text-[10px] uppercase font-bold text-slate-400">Issue Date</p>
                                     <p className="text-xs md:text-sm font-bold text-slate-700">{certDetails.issueDate}</p>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

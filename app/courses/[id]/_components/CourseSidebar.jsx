@@ -2,35 +2,42 @@
 
 import { useEffect } from "react"; // Added useEffect
 import { Button } from "@/components/ui/button";
-import { MonitorPlay, FileText, Infinity, Smartphone, Trophy, Share2, Heart } from "lucide-react";
-import { useEnrollCourseMutation } from "@/redux/student/studentAPi";
+import { MonitorPlay, FileText, Infinity, Smartphone, Trophy, Share2, Heart, Download } from "lucide-react";
+import { useCreateCheckoutSessionMutation } from "@/redux/payment/paymentApi";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 
 export default function CourseSidebar({ course }) {
     const user = useSelector((state) => state.auth.user);
 
-    const [enrollCourse, { isLoading, isSuccess, isError, error }] = useEnrollCourseMutation();
-
-    const isEnrolled = isSuccess || course?.enrolledStudents?.some(
-        (studentId) => studentId === user?._id || studentId?._id === user?._id
+    const [createCheckoutSession, { isLoading, isSuccess, isError, error }] = useCreateCheckoutSessionMutation();
+    const isEnrolled = !!user && (
+        isSuccess || course?.enrolledStudents?.some(
+            (studentId) => studentId === user._id || studentId?._id === user._id
+        )
     );
 
     useEffect(() => {
-        if (isSuccess) {
-            toast.success("Successfully enrolled in the course!");
-        }
         if (isError) {
-            const errorMessage = error?.data?.message || "Failed to enroll. Please try again.";
+            const errorMessage = error?.data?.message || "Failed to initiate payment. Please try again.";
             toast.error(errorMessage);
         }
-    }, [isSuccess, isError, error]);
+    }, [isError, error]);
 
-    const handleEnrollCourse = () => {
+    const handleEnrollCourse = async () => {
         if (!user) {
             return toast.error("Please login to enroll in this course");
         }
-        enrollCourse(course._id);
+
+        try {
+            const res = await createCheckoutSession(course._id).unwrap();
+            if (res.url) {
+                window.location.href = res.url; // Redirect to Stripe Checkout
+            }
+        } catch (err) {
+            console.error("Failed to checkout:", err);
+            // Error handling is managed by the useEffect listening to isError
+        }
     };
 
     return (
@@ -50,11 +57,11 @@ export default function CourseSidebar({ course }) {
                     {isLoading ? "Processing..." : isEnrolled ? "✓ Enrolled" : "Enroll Now"}
                 </Button>
 
-                {!isEnrolled && (
+                {/* {!isEnrolled && (
                     <Button variant="outline" className="w-full h-12 text-base font-bold border-2 border-sPrimary text-sPrimary hover:bg-blue-50">
                         Add to Cart
                     </Button>
-                )}
+                )} */}
             </div>
 
             {/* Inclusions */}
@@ -62,6 +69,9 @@ export default function CourseSidebar({ course }) {
                 <p className="font-bold text-sm text-slate-900">This course includes:</p>
                 <ul className="space-y-3">
                     <FeatureItem icon={FileText} text={`${course.courseIncludes?.totalVideoHours || 0} hours on-demand video`} />
+                    {course.courseIncludes?.downloadableResources && (
+                        <FeatureItem icon={Download} text={`${course.courseIncludes?.downloadableResources} Downloadable resources`} />
+                    )}
                     {course.courseIncludes?.fullLifetimeAccess && (
                         <FeatureItem icon={Infinity} text="Full lifetime access" />
                     )}
