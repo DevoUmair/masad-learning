@@ -31,25 +31,17 @@ export default function InstructorDashboard() {
                 <StatCard
                     label="TOTAL STUDENTS"
                     value={stats?.totalStudents?.toLocaleString() || "0"}
-                    trend={formatTrend("students")}
+                    // trend={formatTrend("students")}
                     icon={Users}
                     iconColor="text-blue-600"
                     iconBg="bg-blue-50"
                     trendColor="text-green-600"
                 />
-                <StatCard
-                    label="TOTAL REVENUE (AED)"
-                    value={stats?.totalEarnings?.toLocaleString() || "0"}
-                    trend={formatTrend("revenue")}
-                    icon={Banknote}
-                    iconColor="text-green-600"
-                    iconBg="bg-green-50"
-                    trendColor="text-green-600"
-                />
+
                 <StatCard
                     label="AVERAGE RATING"
                     value={stats?.averageRating?.toFixed(1) || "0.0"}
-                    trend={formatTrend("rating")}
+                    // trend={formatTrend("rating")}
                     icon={Star}
                     iconColor="text-yellow-500"
                     iconBg="bg-yellow-50"

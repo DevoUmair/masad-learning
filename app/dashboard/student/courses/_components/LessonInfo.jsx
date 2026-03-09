@@ -49,7 +49,8 @@ export default function LessonInfo({ courseId, activeLesson, instructor, complet
                     </h2>
                     <div className="flex items-center gap-4 text-sm text-slate-500">
                         <span className="flex items-center gap-1"><User size={16} /> {instructor?.name || instructor}</span>
-                        {activeLesson.duration > 0 && <span>• {activeLesson.duration} mins</span>}
+                        {activeLesson.duration > 0 && <span>• {Math.floor((activeLesson.duration || 0) / 60)}:
+                            {Math.floor((activeLesson.duration || 0) % 60).toString().padStart(2, "0")}</span>}
                         {activeLesson.resources?.length > 0 && <span>• {activeLesson.resources.length} Resource(s)</span>}
                     </div>
                 </div>

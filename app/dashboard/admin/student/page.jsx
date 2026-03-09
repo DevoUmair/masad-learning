@@ -27,11 +27,11 @@ export default function StudentManagementPage() {
                     <h1 className="text-3xl font-black text-slate-900">Student Management</h1>
                     <p className="text-slate-500">View student details, enrollments, and transaction history.</p>
                 </div>
-                <div className="flex items-center gap-3">
+                {/* <div className="flex items-center gap-3">
                     <Button variant="outline" className="gap-2">
                         <ExternalLink size={16} /> Export Data
                     </Button>
-                </div>
+                </div> */}
             </div>
 
             <StudentToolbar
@@ -53,12 +53,10 @@ export default function StudentManagementPage() {
                 )}
 
                 {selectedStudent && (
-                    <div className="absolute top-0 right-0 h-full z-30">
-                        <StudentDetailsPanel
-                            student={selectedStudent}
-                            onClose={() => setSelectedStudent(null)}
-                        />
-                    </div>
+                    <StudentDetailsPanel
+                        student={selectedStudent}
+                        onClose={() => setSelectedStudent(null)}
+                    />
                 )}
             </div>
         </div>

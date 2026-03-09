@@ -4,7 +4,6 @@ import AdminStatsGrid from './_components/AdminStatsGrid';
 import AdminHeader from './_components/AdminHeader';
 import AdminRevenueSection from './_components/AdminRevenueSection';
 import AdminRecentActivity from './_components/AdminRecentActivity';
-// import { useGetAdminStatsQuery } from '@/redux/admin/adminApi';
 import { useGetAdminStatsQuery } from '@/redux/admin/adminApi';
 
 export default function AdminDashboard() {

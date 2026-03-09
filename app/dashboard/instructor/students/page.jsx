@@ -26,8 +26,9 @@ export default function StudentProgressPage() {
             year: 'numeric'
         }) : "N/A",
         lastActive: record.updatedAt ? new Date(record.updatedAt).toLocaleDateString() : "N/A",
-        avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4g_2Qj3LsNR-iqUAFm6ut2EQVcaou4u2YXw&s"
+        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4g_2Qj3LsNR-iqUAFm6ut2EQVcaou4u2YXw&s'
     })) || [];
+
 
     return (
         <div className="space-y-6 font-lexend">

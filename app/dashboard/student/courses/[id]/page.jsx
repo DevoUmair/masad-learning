@@ -270,7 +270,8 @@ export default function CoursePlayerPage() {
                                                                     <div className="flex items-center gap-3 mt-1 text-[10px] uppercase font-bold tracking-widest text-slate-400">
                                                                         <span className="flex items-center gap-1"><BookOpen size={12} /> {module.lessons?.length || 0} Lessons</span>
                                                                         {module.moduleDuration > 0 && (
-                                                                            <span className="flex items-center gap-1"><Clock size={12} /> {Math.floor(module.moduleDuration / 60)}h {Math.floor(module.moduleDuration % 60)}m</span>
+                                                                            <span className="flex items-center gap-1"><Clock size={12} /> {Math.floor((module.moduleDuration || 0) / 60)}:
+                                                                                {Math.floor((module.moduleDuration || 0) % 60).toString().padStart(2, "0")}</span>
                                                                         )}
                                                                     </div>
                                                                 </div>

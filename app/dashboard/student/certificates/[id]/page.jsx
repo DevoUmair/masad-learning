@@ -43,53 +43,53 @@ const pdfStyles = StyleSheet.create({
         borderTopRightRadius: 120,
     },
     logo: {
-        width: 100,
-        height: 100,
+        width: 120,
+        height: 120,
         objectFit: "contain",
         marginBottom: 10,
     },
     academyText: {
-        fontSize: 10,
+        fontSize: 12,
         color: "#64748b",
         textTransform: "uppercase",
-        letterSpacing: 3,
+        letterSpacing: 4,
         marginBottom: 15,
         fontFamily: "Helvetica-Bold",
     },
     title: {
-        fontSize: 36,
-        color: "#2563eb",
-        // fontFamily: "Times-Roman",
+        fontSize: 38,
+        color: "#0f172a",
         fontWeight: "bold",
-        marginBottom: 30,
+        fontFamily: "Times-Roman",
+        marginBottom: 20,
     },
     subtitle: {
-        fontSize: 14,
-        color: "#64748b",
-        // fontFamily: "Times-Roman",
-        fontStyle: "italic",
+        fontSize: 16,
+        color: "#475569",
+        fontFamily: "Times-Roman",
         marginBottom: 15,
     },
     recipient: {
-        fontSize: 28,
-        color: "#0f172a",
+        fontSize: 34,
+        color: "#1e293b",
         textTransform: "uppercase",
         fontFamily: "Helvetica-Bold",
-        borderBottom: "2pt solid #f1f5f9",
-        paddingBottom: 5,
-        marginBottom: 30,
+        borderBottom: "2pt solid #cbd5e1",
+        paddingBottom: 8,
+        marginBottom: 20,
     },
     description: {
-        fontSize: 12,
+        fontSize: 14,
         color: "#475569",
         marginBottom: 15,
     },
     courseTitle: {
-        fontSize: 20,
-        color: "#0ea5e9",
-        fontFamily: "Helvetica-Bold",
+        fontSize: 24,
+        color: "#0f172a",
+        fontFamily: "Times-Roman",
+        fontWeight: "bold",
         textAlign: "center",
-        paddingHorizontal: 30,
+        paddingHorizontal: 40,
     },
     footerContainer: {
         position: "absolute",
@@ -231,22 +231,22 @@ export default function CertificateDetail() {
                         <div className="absolute top-0 right-0 w-32 h-32 bg-sPrimary/5 rounded-bl-full z-0"></div>
                         <div className="absolute bottom-0 left-0 w-32 h-32 bg-sSecondary/5 rounded-tr-full z-0"></div>
 
-                        <div className="relative z-10 mb-6">
-                            <Image src="/logo/logo2.png" alt="Logo" width={100} height={100} className="object-contain" />
+                        <div className="relative z-10 mb-8">
+                            <Image src="/logo/logo2.png" alt="Logo" width={140} height={140} className="object-contain" />
                         </div>
 
                         <div className="relative z-10 w-full">
-                            <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs text-slate-500 font-black mb-4">Masad Learning Academy</p>
-                            <h2 className="text-3xl md:text-5xl font-serif font-bold text-sPrimary mb-6 md:mb-10 tracking-tight">Certificate of Completion</h2>
+                            <p className="uppercase tracking-[0.4em] text-[10px] md:text-sm text-slate-500 font-bold mb-6">Masad Learning Academy</p>
+                            <h2 className="text-4xl md:text-6xl font-serif font-black text-slate-900 mb-8 md:mb-10 tracking-tight">Certificate of Completion</h2>
 
-                            <p className="italic text-slate-500 mb-2 md:mb-4 font-medium">This is to certify that</p>
-                            <h3 className="text-2xl md:text-4xl font-black text-slate-900 mb-6 md:mb-10 border-b-2 border-slate-100 pb-2 inline-block px-12 uppercase">{certDetails.recipient}</h3>
+                            <p className="text-slate-500 mb-3 md:mb-5 font-serif text-lg">This is to certify that</p>
+                            <h3 className="text-3xl md:text-5xl font-black text-slate-800 mb-8 md:mb-10 border-b-2 border-slate-200 pb-3 inline-block px-14 uppercase tracking-wide">{certDetails.recipient}</h3>
 
-                            <p className="text-slate-600 max-w-md mx-auto mb-4 text-xs md:text-sm leading-relaxed font-medium">
+                            <p className="text-slate-600 max-w-lg mx-auto mb-5 text-sm md:text-base leading-relaxed font-medium">
                                 has successfully completed all requirements for the professional course:
                             </p>
 
-                            <h4 className="text-lg md:text-2xl font-black text-sSecondary max-w-xl mx-auto leading-tight px-4">
+                            <h4 className="text-xl md:text-3xl font-serif font-bold text-slate-900 max-w-2xl mx-auto leading-tight px-4 border-y border-slate-100 py-4">
                                 {certDetails.fullTitle}
                             </h4>
 

@@ -221,7 +221,7 @@ export default function CourseEditorPage({ params }) {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="border-slate-200 cursor-pointer">Preview</Button>
+                    {/* <Button variant="outline" className="border-slate-200 cursor-pointer">Preview</Button> */}
                     <Button
                         onClick={handleSave}
                         disabled={isLoading}

@@ -50,7 +50,7 @@ export default function InstructorDetailsPage({ params }) {
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
+                {/* <div className="flex items-center gap-3">
                     <Button variant="outline" className="gap-2">
                         <Mail size={16} /> Contact
                     </Button>
@@ -60,12 +60,12 @@ export default function InstructorDetailsPage({ params }) {
                     >
                         <BadgeDollarSign size={16} /> Process Payout
                     </Button>
-                </div>
+                </div> */}
             </div>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card>
+                {/* <Card>
                     <CardContent className="p-6 flex flex-col gap-1">
                         <span className="text-slate-500 text-sm font-medium">Total Revenue</span>
                         <span className="text-2xl font-black text-slate-900">${instructorData.stats.totalRevenue.toLocaleString()}</span>
@@ -76,7 +76,7 @@ export default function InstructorDetailsPage({ params }) {
                         <span className="text-slate-500 text-sm font-medium">Pending Payout</span>
                         <span className="text-2xl font-black text-red-600">${instructorData.stats.pendingPayout.toLocaleString()}</span>
                     </CardContent>
-                </Card>
+                </Card> */}
                 <Card>
                     <CardContent className="p-6 flex flex-col gap-1">
                         <span className="text-slate-500 text-sm font-medium">Total Students</span>
@@ -102,12 +102,12 @@ export default function InstructorDetailsPage({ params }) {
                         <Link key={course.id} href={`/dashboard/admin/courses/${course.id}`} className="group">
                             <div className="bg-white rounded-xl border border-slate-200 hover:border-sPrimary hover:shadow-md transition-all overflow-hidden h-full flex flex-col">
                                 <div className="h-40 bg-slate-100 flex items-center justify-center relative">
-                                    <BookOpen size={40} className="text-slate-300" />
+                                    <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover" />
                                     <Badge className="absolute top-3 right-3 bg-white/90 text-slate-900 hover:bg-white">{course.status}</Badge>
                                 </div>
                                 <div className="p-5 flex flex-col flex-1">
                                     <div className="flex items-center justify-between mb-2">
-                                        <Badge variant="outline" className="text-xs font-normal border-slate-200">{course.modules} Modules</Badge>
+                                        {/* <Badge variant="outline" className="text-xs font-normal border-slate-200">{course.modules} Modules</Badge> */}
                                         <span className="flex items-center gap-1 text-xs font-bold text-yellow-500">
                                             <Star size={12} fill="currentColor" /> {course.rating}
                                         </span>

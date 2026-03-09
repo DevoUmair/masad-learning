@@ -101,7 +101,8 @@ export default function CourseSidebar({ modules, activeLesson, expandedModules, 
                                                 <div className="flex items-center gap-2 mt-1">
                                                     {isVideo ? <PlayCircle size={12} className="text-slate-400" /> : <FileText size={12} className="text-slate-400" />}
                                                     <span className="text-xs text-slate-500">
-                                                        {isVideo ? 'Video' : 'Document'} {lesson.duration > 0 ? `• ${lesson.duration}m` : ''}
+                                                        {isVideo ? 'Video' : 'Document'} {lesson.duration > 0 ? `• ${Math.floor(lesson.duration / 60)}:
+                                                            ${Math.floor((lesson.duration || 0) % 60).toString().padStart(2, "0")}` : ''}
                                                     </span>
                                                 </div>
                                             </div>

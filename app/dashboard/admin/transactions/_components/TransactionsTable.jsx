@@ -27,33 +27,51 @@ export default function TransactionsTable({ transactions }) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {transactions.map((trx) => (
-                            <TableRow key={trx.id} className="hover:bg-slate-50/50 transition-colors">
-                                <TableCell className="font-mono text-xs text-slate-500">{trx.id}</TableCell>
-                                <TableCell>
-                                    <div>
-                                        <p className="font-bold text-slate-900 text-sm">{trx.student.name}</p>
-                                        <p className="text-xs text-slate-500">{trx.student.email}</p>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="font-medium text-sm">{trx.course}</TableCell>
-                                <TableCell className="text-sm text-slate-600">{trx.instructor}</TableCell>
-                                <TableCell className="text-sm text-slate-600">{trx.date}</TableCell>
-                                <TableCell className="font-bold text-slate-900">${trx.amount}</TableCell>
-                                <TableCell>
-                                    <Badge
-                                        variant="outline"
-                                        className={
-                                            trx.status === "Completed" ? "bg-green-50 text-green-700 border-green-200" :
-                                                trx.status === "Pending" ? "bg-yellow-50 text-yellow-700 border-yellow-200" :
-                                                    "bg-red-50 text-red-700 border-red-200"
-                                        }
-                                    >
-                                        {trx.status}
-                                    </Badge>
+                        {(transactions || []).length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={7} className="h-24 text-center text-slate-500">
+                                    No transactions found.
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            transactions.map((trx) => {
+                                let mappedStatus = "Pending";
+                                if (trx.status === "paid" || trx.status === "Completed") mappedStatus = "Completed";
+                                if (trx.status === "refunded" || trx.status === "Refunded") mappedStatus = "Refunded";
+
+                                return (
+                                    <TableRow key={trx._id || trx.id} className="hover:bg-slate-50/50 transition-colors">
+                                        <TableCell className="font-mono text-xs text-slate-500">{trx?.paymentId}</TableCell>
+                                        <TableCell>
+                                            <div>
+                                                <p className="font-bold text-slate-900 text-sm">{trx.student?.name || "Unknown Student"}</p>
+                                                <p className="text-xs text-slate-500">{trx.student?.email || "N/A"}</p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="font-medium text-sm">{trx.course?.title || trx.course || "Unknown Course"}</TableCell>
+                                        <TableCell className="text-sm text-slate-600">{trx.instructor?.name || trx.instructor || "Unknown Instructor"}</TableCell>
+                                        <TableCell className="text-sm text-slate-600">
+                                            {new Date(trx.createdAt || trx.date).toLocaleDateString()}
+                                        </TableCell>
+                                        <TableCell className="font-bold text-slate-900">
+                                            {trx.amount} {trx.currency ? trx.currency.toUpperCase() : "USD"}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant="outline"
+                                                className={
+                                                    mappedStatus === "Completed" ? "bg-green-50 text-green-700 border-green-200" :
+                                                        mappedStatus === "Pending" ? "bg-yellow-50 text-yellow-700 border-yellow-200" :
+                                                            "bg-red-50 text-red-700 border-red-200"
+                                                }
+                                            >
+                                                {mappedStatus}
+                                            </Badge>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })
+                        )}
                     </TableBody>
                 </Table>
             </div>

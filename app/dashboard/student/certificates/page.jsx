@@ -64,7 +64,7 @@ export default function CertificatesPage() {
                             </div>
                             <div className="p-6 flex flex-col flex-1">
                                 <div className="mb-4">
-                                    <h3 className="font-bold text-lg leading-snug line-clamp-2 min-h-14 group-hover:text-sPrimary transition-colors">
+                                    <h3 className="font-bold text-lg leading-snug line-clamp-2 min-h-2 group-hover:text-sPrimary transition-colors">
                                         {cert.course?.title}
                                     </h3>
                                     <p className="text-sm text-sSecondary mt-2 font-medium flex items-center gap-1.5">

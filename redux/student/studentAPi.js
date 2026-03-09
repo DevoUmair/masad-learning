@@ -31,7 +31,8 @@ export const studentApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: (result, error, { courseId }) => [
                 { type: 'CourseProgress', id: courseId },
-                'EnrolledCourses'
+                'EnrolledCourses',
+                'Certificate'
             ],
         }),
     }),

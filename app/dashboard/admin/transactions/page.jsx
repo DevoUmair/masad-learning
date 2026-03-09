@@ -6,75 +6,32 @@ import TransactionsToolbar from './_components/TransactionsToolbar';
 import TransactionsStats from './_components/TransactionsStats';
 import TransactionsTable from './_components/TransactionsTable';
 
-// Mock Data
-const initialTransactions = [
-    {
-        id: "TRX-1001",
-        student: { name: "Ahmed Khan", email: "ahmed.k@example.com" },
-        course: "Strategic Leadership",
-        instructor: "Dr. Sarah Al-Maktoum",
-        amount: 49.99,
-        date: "2023-10-24",
-        status: "Completed"
-    },
-    {
-        id: "TRX-1002",
-        student: { name: "Layla Hassan", email: "layla.h@example.com" },
-        course: "Executive Communication",
-        instructor: "Dr. Sarah Al-Maktoum",
-        amount: 59.99,
-        date: "2023-10-23",
-        status: "Completed"
-    },
-    {
-        id: "TRX-1003",
-        student: { name: "Omar Farooq", email: "omar.f@example.com" },
-        course: "Python for Beginners",
-        instructor: "Mohammed Al-Fayed",
-        amount: 39.99,
-        date: "2023-10-22",
-        status: "Refunded"
-    },
-    {
-        id: "TRX-1004",
-        student: { name: "Zainab Ali", email: "zainab.a@example.com" },
-        course: "Digital Marketing 101",
-        instructor: "Fatima Al-Zahra",
-        amount: 29.99,
-        date: "2023-10-21",
-        status: "Completed"
-    },
-    {
-        id: "TRX-1005",
-        student: { name: "Khalid Bin Walid", email: "khalid.w@example.com" },
-        course: "Strategic Leadership",
-        instructor: "Dr. Sarah Al-Maktoum",
-        amount: 49.99,
-        date: "2023-10-20",
-        status: "Pending"
-    },
-];
+import { useGetTransactionsQuery } from '@/redux/transaction/transactionapi';
 
 export default function TransactionsPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
+    const { data: transactions, isLoading, error } = useGetTransactionsQuery();
 
-    const filteredTransactions = initialTransactions.filter(trx => {
+    const filteredTransactions = (transactions || []).filter(trx => {
+        const searchLower = searchTerm.toLowerCase();
         const matchesSearch =
-            trx.student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            trx.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            trx.instructor.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStatus = statusFilter === "All" || trx.status === statusFilter;
+            (trx.student?.name || "").toLowerCase().includes(searchLower) ||
+            (trx.student?.email || "").toLowerCase().includes(searchLower) ||
+            (trx.course?.title || trx.course || "").toString().toLowerCase().includes(searchLower) ||
+            (trx.instructor?.name || trx.instructor || "").toString().toLowerCase().includes(searchLower);
+
+        let mappedStatus = "Pending";
+        if (trx.status === "paid" || trx.status === "Completed") mappedStatus = "Completed";
+        if (trx.status === "refunded" || trx.status === "Refunded") mappedStatus = "Refunded";
+
+        const matchesStatus = statusFilter === "All" || mappedStatus === statusFilter;
         return matchesSearch && matchesStatus;
     });
 
     const totalRevenue = filteredTransactions
-        .filter(t => t.status === "Completed")
-        .reduce((sum, t) => sum + t.amount, 0);
-
-    const pendingAmount = filteredTransactions
-        .filter(t => t.status === "Pending")
-        .reduce((sum, t) => sum + t.amount, 0);
+        .filter(t => t.status === "paid" || t.status === "Completed")
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
 
     const handleExportPDF = () => {
         window.print();
@@ -88,17 +45,16 @@ export default function TransactionsPage() {
                     <h1 className="text-3xl font-black text-slate-900">Payment Transactions</h1>
                     <p className="text-slate-500">Monitor and manage all platform transactions.</p>
                 </div>
-                <div className="flex items-center gap-3">
+                {/* <div className="flex items-center gap-3">
                     <Button onClick={handleExportPDF} variant="outline" className="gap-2">
                         <Download size={16} /> Export PDF Report
                     </Button>
-                </div>
+                </div> */}
             </div>
 
             <TransactionsStats
                 totalRevenue={totalRevenue}
-                count={filteredTransactions.length}
-                pendingAmount={pendingAmount}
+                count={(filteredTransactions || []).length}
             />
 
             <TransactionsToolbar

@@ -12,7 +12,7 @@ export default function CourseSidebar({ course }) {
 
     const [createCheckoutSession, { isLoading, isSuccess, isError, error }] = useCreateCheckoutSessionMutation();
     const isEnrolled = !!user && (
-        isSuccess || course?.enrolledStudents?.some(
+        course?.enrolledStudents?.some(
             (studentId) => studentId === user._id || studentId?._id === user._id
         )
     );

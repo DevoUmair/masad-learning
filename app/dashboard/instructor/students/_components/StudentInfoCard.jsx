@@ -10,7 +10,7 @@ export default function StudentInfoCard({ student }) {
             <div className="h-32 bg-gradient-to-r from-slate-900 to-slate-800 relative">
                 <div className="absolute -bottom-10 left-8">
                     <Avatar className="size-24 border-4 border-white shadow-md">
-                        <AvatarImage src={student.avatar} alt={student.name} />
+                        <AvatarImage src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4g_2Qj3LsNR-iqUAFm6ut2EQVcaou4u2YXw&s'} alt={student.name} />
                         <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                 </div>

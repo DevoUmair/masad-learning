@@ -8,7 +8,7 @@ export default function SettingsForm() {
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm space-y-8">
             {/* Pricing is handled by admin */}
             <div className="space-y-2">
-                <h3 className="font-bold text-lg text-slate-900">Permissions</h3>
+                <h3 className="font-bold text-lg text-slate-900">Pricing</h3>
                 <p className="text-sm text-slate-500">Pricing for your courses will be defined and managed by the platform administrators.</p>
             </div>
 
@@ -30,13 +30,13 @@ export default function SettingsForm() {
                 </div>
             </div> */}
 
-            <div className="pt-6 border-t border-slate-100">
+            {/* <div className="pt-6 border-t border-slate-100">
                 <h3 className="font-bold text-lg text-red-600 mb-2">Danger Zone</h3>
                 <p className="text-sm text-slate-500 mb-4">Once you delete a course, there is no going back. Please be certain.</p>
                 <Button variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 cursor-pointer">
                     Delete Course
                 </Button>
-            </div>
+            </div> */}
         </div>
     )
 }

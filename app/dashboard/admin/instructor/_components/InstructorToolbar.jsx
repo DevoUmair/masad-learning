@@ -12,11 +12,11 @@ export function InstructorToolbar({ searchTerm, onSearchChange }) {
                     <h1 className="text-3xl font-black text-slate-900">Instructor Management</h1>
                     <p className="text-slate-500">Manage instructors, view earnings, and process payouts.</p>
                 </div>
-                <div className="flex items-center gap-3">
+                {/* <div className="flex items-center gap-3">
                     <Button variant="outline" className="gap-2">
                         <ExternalLink size={16} /> Export Data
                     </Button>
-                </div>
+                </div> */}
             </div>
 
             <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm gap-4">

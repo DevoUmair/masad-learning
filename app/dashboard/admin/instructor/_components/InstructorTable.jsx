@@ -48,7 +48,7 @@ export function InstructorTable({ instructors, onPayoutClick }) {
                             <TableHead>Expertise</TableHead>
                             <TableHead>Students</TableHead>
                             <TableHead>Rating</TableHead>
-                            <TableHead>Earnings</TableHead>
+                            {/* <TableHead>Earnings</TableHead> */}
                             <TableHead>Joined</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
@@ -79,9 +79,9 @@ export function InstructorTable({ instructors, onPayoutClick }) {
                                 <TableCell className="font-medium text-slate-600">
                                     {instructor.instructorProfile?.averageRating || 0}
                                 </TableCell>
-                                <TableCell className="font-bold text-slate-900">
+                                {/* <TableCell className="font-bold text-slate-900">
                                     AED {(instructor.instructorProfile?.totalEarnings || 0).toLocaleString()}
-                                </TableCell>
+                                </TableCell> */}
                                 <TableCell className="text-slate-500 text-sm">
                                     {instructor.createdAt
                                         ? new Date(instructor.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })

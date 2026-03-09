@@ -11,7 +11,7 @@ const iconMap = {
 };
 
 const linkMap = {
-    "Total Revenue": "/dashboard/admin/billing",
+    "Total Revenue": "/dashboard/admin/transactions",
     "Active Courses": "/dashboard/admin/courses",
     "Total Instructors": "/dashboard/admin/instructor",
     "Total Students": "/dashboard/admin/student",
