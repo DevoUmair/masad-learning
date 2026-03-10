@@ -51,7 +51,14 @@ export default function TransactionsTable({ transactions }) {
                                         <TableCell className="font-medium text-sm">{trx.course?.title || trx.course || "Unknown Course"}</TableCell>
                                         <TableCell className="text-sm text-slate-600">{trx.instructor?.name || trx.instructor || "Unknown Instructor"}</TableCell>
                                         <TableCell className="text-sm text-slate-600">
-                                            {new Date(trx.createdAt || trx.date).toLocaleDateString()}
+                                            {/* {new Date(trx.createdAt || trx.date).toLocaleDateString()} */}
+                                            {new Date(trx.createdAt || trx.date).toLocaleString("en-US", {
+                                                year: "numeric",
+                                                month: "short",
+                                                day: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit"
+                                            })}
                                         </TableCell>
                                         <TableCell className="font-bold text-slate-900">
                                             {trx.amount} {trx.currency ? trx.currency.toUpperCase() : "USD"}

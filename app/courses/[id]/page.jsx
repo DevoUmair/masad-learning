@@ -160,7 +160,7 @@ export default function CourseDetailsPage() {
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                             <Globe size={14} />
-                                            {course.instructor?.instructorProfile?.totalStudents || 0} Students
+                                            {course.instructor?.instructorProfile?.totalStudents || 0} Students enrolled in this instructor's courses
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                             <Play size={14} />
@@ -196,7 +196,7 @@ export default function CourseDetailsPage() {
                                                 date={date}
                                                 initials={initials}
                                                 rating={review.rating}
-                                                text={review.comment || "No comment provided."}
+                                                text={review.comment}
                                             />
                                         );
                                     })}
@@ -261,7 +261,9 @@ function ReviewCard({ name, date, initials, rating, text }) {
                     <Star key={i} size={12} fill={i < rating ? "currentColor" : "none"} className={i >= rating ? "text-slate-200" : ""} />
                 ))}
             </div>
-            <p className="text-sm text-slate-600 leading-relaxed">"{text}"</p>
+            <p className="text-sm text-slate-600 leading-relaxed">
+                {text ? `${text}` : "no comments provided"}
+            </p>
         </div>
     );
 }

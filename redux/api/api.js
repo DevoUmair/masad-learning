@@ -74,7 +74,8 @@ export const baseApi = createApi({
         'StudentProfile',
         'InstructorStats',
         'Certificate',
-        'Course'
+        'Course',
+        'Promo'
     ],
     endpoints: () => ({}),
 });

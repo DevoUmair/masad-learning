@@ -2,9 +2,6 @@ import { baseApi } from "../api/api";
 
 export const adminApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-
-
-        // Admin Dashboard Stats
         getAdminStats: builder.query({
             query: () => ({
                 url: '/admin/dashboard-stats',
@@ -12,13 +9,10 @@ export const adminApi = baseApi.injectEndpoints({
             }),
             providesTags: ['AdminStats'],
         }),
-
-
     }),
     overrideExisting: false,
 });
 
 export const {
-
     useGetAdminStatsQuery,
 } = adminApi;

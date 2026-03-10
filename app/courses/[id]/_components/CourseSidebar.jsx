@@ -49,14 +49,15 @@ export default function CourseSidebar({ course }) {
 
             {/* Actions */}
             <div className="space-y-3 mb-8">
-                <Button
-                    onClick={handleEnrollCourse}
-                    disabled={isLoading || isEnrolled}
-                    className="w-full h-12 text-base font-bold bg-sPrimary hover:bg-blue-700 shadow-md shadow-blue-200"
-                >
-                    {isLoading ? "Processing..." : isEnrolled ? "✓ Enrolled" : "Enroll Now"}
-                </Button>
-
+                {user?.role !== 'instructor' && user?.role !== 'admin' && (
+                    <Button
+                        onClick={handleEnrollCourse}
+                        disabled={isLoading || isEnrolled}
+                        className="w-full h-12 text-base font-bold bg-sPrimary hover:bg-blue-700 shadow-md shadow-blue-200"
+                    >
+                        {isLoading ? "Processing..." : isEnrolled ? "✓ Enrolled" : "Enroll Now"}
+                    </Button>
+                )}
                 {/* {!isEnrolled && (
                     <Button variant="outline" className="w-full h-12 text-base font-bold border-2 border-sPrimary text-sPrimary hover:bg-blue-50">
                         Add to Cart
@@ -75,7 +76,6 @@ export default function CourseSidebar({ course }) {
                     {course.courseIncludes?.fullLifetimeAccess && (
                         <FeatureItem icon={Infinity} text="Full lifetime access" />
                     )}
-                    <FeatureItem icon={Smartphone} text="Access on mobile and TV" />
                     {course.courseIncludes?.certificateOfCompletion && (
                         <FeatureItem icon={Trophy} text="Certificate of completion" />
                     )}
@@ -85,14 +85,14 @@ export default function CourseSidebar({ course }) {
             {/* Footer Actions */}
             <div className="flex items-center justify-between pt-6 border-t border-slate-100">
                 <button
-                    onClick={() => toast.info("Link copied to clipboard!")}
+                    onClick={() => { const url = window.location.href;; window.navigator.clipboard.writeText(url); toast.info("Link copied to clipboard!") }}
                     className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-sPrimary transition-colors"
                 >
                     <Share2 size={18} /> Share
                 </button>
-                <button className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-red-500 transition-colors">
+                {/* <button className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-red-500 transition-colors">
                     <Heart size={18} /> Save
-                </button>
+                </button> */}
             </div>
         </div>
     );
