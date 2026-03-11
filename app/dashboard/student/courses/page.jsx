@@ -1,48 +1,11 @@
+'use client'
+import { Loader2 } from "lucide-react";
 import { ActiveCourseCard } from "../_components/ActiveCourse";
-const mockCourses = [
-    {
-        id: 1,
-        title: "Full-Stack Development with Next.js & TypeScript",
-        instructor: "Dr. Sarah Khan",
-        progress: 65,
-        category: "Technology",
-        image: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-        id: 2,
-        title: "Cloud Infrastructure & AWS Solutions Architecture",
-        instructor: "Mohammed Al-Fayed",
-        progress: 30,
-        category: "Technology",
-        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-        id: 3,
-        title: "Cybersecurity: Ethical Hacking & Defense",
-        instructor: "Dr. James Wilson",
-        progress: 10,
-        category: "Security",
-        image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-        id: 4,
-        title: "Modern UI/UX Design Systems for Web",
-        instructor: "Fatima Al-Zahra",
-        progress: 85,
-        category: "Design",
-        image: "https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-        id: 5,
-        title: "AI and Machine Learning Fundamentals",
-        instructor: "Dr. Ali Hassan",
-        progress: 0,
-        category: "Technology",
-        image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800"
-    }
-];
+import { useGetEnrolledCoursesQuery } from "@/redux/student/studentAPi";
 
 export default function CoursesPage() {
+    const { data: enrolledCourses, isLoading } = useGetEnrolledCoursesQuery();
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col ">
@@ -52,18 +15,27 @@ export default function CoursesPage() {
                 <p className="text-sSecondary">Manage and continue your learning journey.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {mockCourses.map((course) => (
-                    <ActiveCourseCard
-                        key={course.id}
-                        title={course.title}
-                        instructor={course.instructor}
-                        progress={course.progress}
-                        category={course.category}
-                        image={course.image}
-                    />
-                ))}
-            </div>
+            {isLoading ? (
+                <div className="flex items-center justify-center py-20">
+                    <Loader2 size={32} className="animate-spin text-sPrimary" />
+                </div>
+            ) : enrolledCourses?.courses?.length === 0 ? (
+                <div className="text-center py-20">
+                    <p className="text-slate-500 text-lg font-medium">You haven&apos;t enrolled in any courses yet.</p>
+                    <a href="/courses" className="text-sm font-bold text-sPrimary hover:underline mt-2 inline-block">
+                        Browse Courses
+                    </a>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {enrolledCourses?.courses?.map((course) => (
+                        <ActiveCourseCard
+                            key={course._id}
+                            course={course}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

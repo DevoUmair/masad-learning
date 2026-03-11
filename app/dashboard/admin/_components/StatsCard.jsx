@@ -16,7 +16,7 @@ export default function StatsCard({ title, value, icon: Icon, trend, trendValue,
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold text-slate-900">{value}</div>
-                {(trend || trendValue) && (
+                {/* {(trend || trendValue) && (
                     <div className="flex items-center text-xs mt-1">
                         {trend === 'up' ? (
                             <span className="text-green-500 flex items-center font-medium">
@@ -31,7 +31,7 @@ export default function StatsCard({ title, value, icon: Icon, trend, trendValue,
                         )}
                         <span className="text-slate-400 ml-1">from last month</span>
                     </div>
-                )}
+                )} */}
                 {link && (
                     <div className="mt-4 pt-4 border-t border-slate-100">
                         <Link href={link} className="text-xs text-sPrimary hover:underline font-medium">View Details</Link>

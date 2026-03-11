@@ -38,14 +38,14 @@ const recentActivities = [
     },
 ];
 
-export default function AdminRecentActivity() {
+export default function AdminRecentActivity({ activities = [] }) {
     return (
         <div className="lg:col-span-1 bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col">
             <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                 Recent Activity
             </h2>
             <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar">
-                {recentActivities.map((activity) => (
+                {activities.map((activity) => (
                     <div key={activity.id} className="flex gap-4 items-start">
                         <div className={`mt-1 size-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 
                             ${activity.type === 'enrollment' ? 'bg-green-100 text-green-600' :
@@ -73,7 +73,6 @@ export default function AdminRecentActivity() {
                     </div>
                 ))}
             </div>
-            <button className="w-full text-center text-sm font-bold text-sPrimary mt-6 hover:underline">View All Activity</button>
         </div>
     );
 }

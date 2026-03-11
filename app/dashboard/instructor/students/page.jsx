@@ -4,61 +4,31 @@ import { Card } from "@/components/ui/card";
 import StudentHeader from './_components/StudentHeader';
 import StudentToolbar from './_components/StudentToolbar';
 import StudentListTable from './_components/StudentListTable';
+import { useGetAllEnrolledStudentsQuery } from '@/redux/instructor/instructorApi';
 
 export default function StudentProgressPage() {
-    // Mock Data for Students
-    const students = [
-        {
-            id: 1,
-            name: "Ahmed Hassan",
-            email: "ahmed.hassan@example.com",
-            course: "Complete Python Bootcamp 2024",
-            progress: 75,
-            joinedDate: "12 Jan, 2024",
-            lastActive: "2 hours ago",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmed"
-        },
-        {
-            id: 2,
-            name: "Sarah Jenkins",
-            email: "sarah.j@example.com",
-            course: "UI Design Fundamentals",
-            progress: 32,
-            joinedDate: "15 Jan, 2024",
-            lastActive: "1 day ago",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
-        },
-        {
-            id: 3,
-            name: "Mohammed Ali",
-            email: "m.ali@example.com",
-            course: "Introduction to AI Ethics",
-            progress: 100,
-            joinedDate: "20 Dec, 2023",
-            lastActive: "5 days ago",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mohammed"
-        },
-        {
-            id: 4,
-            name: "Emily Chen",
-            email: "emily.c@example.com",
-            course: "Professional Management 101",
-            progress: 58,
-            joinedDate: "02 Feb, 2024",
-            lastActive: "Just now",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily"
-        },
-        {
-            id: 5,
-            name: "John Doe",
-            email: "john.doe@example.com",
-            course: "Do Django With Me",
-            progress: 12,
-            joinedDate: "10 Feb, 2024",
-            lastActive: "3 days ago",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John"
-        }
-    ];
+    const { data: progressRecords, isLoading, error } = useGetAllEnrolledStudentsQuery();
+
+    if (isLoading) return <div className="p-8 text-center">Loading students...</div>;
+    if (error) return <div className="p-8 text-center text-red-500">Error loading students</div>;
+
+    const students = progressRecords?.map(record => ({
+        id: record._id,
+        studentId: record.student?._id,
+        name: record.student?.name || "Unknown Student",
+        email: record.student?.email || "No Email",
+        course: record.course?.title || "Unknown Course",
+        coursesEnrolled: record.coursesEnrolled || 1,
+        progress: record.completionPercentage || 0,
+        joinedDate: record.createdAt ? new Date(record.createdAt).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        }) : "N/A",
+        lastActive: record.updatedAt ? new Date(record.updatedAt).toLocaleDateString() : "N/A",
+        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4g_2Qj3LsNR-iqUAFm6ut2EQVcaou4u2YXw&s'
+    })) || [];
+
 
     return (
         <div className="space-y-6 font-lexend">
@@ -68,9 +38,7 @@ export default function StudentProgressPage() {
                 <StudentToolbar />
                 <StudentListTable students={students} />
 
-                <div className="p-4 border-t border-slate-100 text-center text-sm text-slate-500">
-                    <button className="hover:text-sPrimary font-medium cursor-pointer transition-colors">Load more students</button>
-                </div>
+
             </Card>
         </div>
     );

@@ -7,63 +7,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { PayoutModal } from '../_components/PayoutModal';
-
-// Mock Data
-const instructorData = {
-    id: 1,
-    name: "Dr. Sarah Al-Maktoum",
-    email: "sarah.m@example.com",
-    avatar: "SM",
-    role: "Senior Instructor",
-    status: "Active",
-    joinDate: "Oct 15, 2023",
-    bio: "Ph.D. in Business Administration with over 15 years of experience in strategic leadership and organizational behavior.",
-    stats: {
-        totalRevenue: 12500,
-        pendingPayout: 2500,
-        students: 450,
-        courses: 5,
-        rating: 4.8
-    },
-    // Ensure pendingAmount is available for the modal
-    pendingAmount: 2500,
-    courses: [
-        {
-            id: 101,
-            title: "Strategic Leadership & Management",
-            thumbnail: "/course-1.jpg",
-            students: 120,
-            rating: 4.8,
-            price: "$49.99",
-            status: "Published",
-            modules: 8
-        },
-        {
-            id: 102,
-            title: "Executive Communication Mastery",
-            thumbnail: "/course-2.jpg",
-            students: 85,
-            rating: 4.9,
-            price: "$59.99",
-            status: "Published",
-            modules: 6
-        },
-        {
-            id: 103,
-            title: "Remote Team Management",
-            thumbnail: "/course-3.jpg",
-            students: 245,
-            rating: 4.7,
-            price: "$39.99",
-            status: "Published",
-            modules: 5
-        }
-    ]
-};
+// import { useGetInstructorProfileQuery } from '@/redux/admin/adminApi';
+import { useGetInstructorProfileQuery } from '@/redux/instructor/instructorApi';
 
 export default function InstructorDetailsPage({ params }) {
     const { id } = use(params);
+    const { data, isLoading, error } = useGetInstructorProfileQuery(id);
     const [isPayoutModalOpen, setIsPayoutModalOpen] = useState(false);
+
+    if (isLoading) return <div className="p-8 text-center text-slate-500 font-lexend">Loading instructor details...</div>;
+    if (error) return <div className="p-8 text-center text-red-500 font-lexend">Error loading instructor details</div>;
+
+    const instructorData = data?.instructorData;
+
+    if (!instructorData) return <div className="p-8 text-center text-slate-500 font-lexend">Instructor not found</div>;
 
     const handlePayoutConfirm = (instructorId, amount) => {
         console.log(`Processing payout of $${amount} for instructor ${instructorId}`);
@@ -93,7 +50,7 @@ export default function InstructorDetailsPage({ params }) {
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
+                {/* <div className="flex items-center gap-3">
                     <Button variant="outline" className="gap-2">
                         <Mail size={16} /> Contact
                     </Button>
@@ -103,12 +60,12 @@ export default function InstructorDetailsPage({ params }) {
                     >
                         <BadgeDollarSign size={16} /> Process Payout
                     </Button>
-                </div>
+                </div> */}
             </div>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card>
+                {/* <Card>
                     <CardContent className="p-6 flex flex-col gap-1">
                         <span className="text-slate-500 text-sm font-medium">Total Revenue</span>
                         <span className="text-2xl font-black text-slate-900">${instructorData.stats.totalRevenue.toLocaleString()}</span>
@@ -119,7 +76,7 @@ export default function InstructorDetailsPage({ params }) {
                         <span className="text-slate-500 text-sm font-medium">Pending Payout</span>
                         <span className="text-2xl font-black text-red-600">${instructorData.stats.pendingPayout.toLocaleString()}</span>
                     </CardContent>
-                </Card>
+                </Card> */}
                 <Card>
                     <CardContent className="p-6 flex flex-col gap-1">
                         <span className="text-slate-500 text-sm font-medium">Total Students</span>
@@ -142,15 +99,15 @@ export default function InstructorDetailsPage({ params }) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {instructorData.courses.map((course) => (
-                        <Link key={course.id} href={`/dashboard/admin/instructor/${id}/course/${course.id}`} className="group">
+                        <Link key={course.id} href={`/dashboard/admin/courses/${course.id}`} className="group">
                             <div className="bg-white rounded-xl border border-slate-200 hover:border-sPrimary hover:shadow-md transition-all overflow-hidden h-full flex flex-col">
                                 <div className="h-40 bg-slate-100 flex items-center justify-center relative">
-                                    <BookOpen size={40} className="text-slate-300" />
+                                    <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover" />
                                     <Badge className="absolute top-3 right-3 bg-white/90 text-slate-900 hover:bg-white">{course.status}</Badge>
                                 </div>
                                 <div className="p-5 flex flex-col flex-1">
                                     <div className="flex items-center justify-between mb-2">
-                                        <Badge variant="outline" className="text-xs font-normal border-slate-200">{course.modules} Modules</Badge>
+                                        {/* <Badge variant="outline" className="text-xs font-normal border-slate-200">{course.modules} Modules</Badge> */}
                                         <span className="flex items-center gap-1 text-xs font-bold text-yellow-500">
                                             <Star size={12} fill="currentColor" /> {course.rating}
                                         </span>

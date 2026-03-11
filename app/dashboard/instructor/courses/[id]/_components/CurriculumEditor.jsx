@@ -4,27 +4,19 @@ import { Plus, Trash2, GripVertical, Settings, Video as VideoIcon, FileText } fr
 import { Button } from "@/components/ui/button";
 import AddLessonDialog from './AddLessonDialog';
 
-export default function CurriculumEditor() {
-    const [modules, setModules] = useState([
-        {
-            id: 1,
-            title: "Introduction",
-            lessons: [
-                { id: 1, title: "Welcome to the course", type: "video", duration: "2:30" },
-                { id: 2, title: "Course Resources", type: "pdf", size: "5MB" }
-            ]
-        }
-    ]);
+export default function CurriculumEditor({ modules, setModules }) {
 
-    // State for Add Lesson Dialog
+    // State for Add/Edit Lesson Dialog
     const [isAddLessonOpen, setIsAddLessonOpen] = useState(false);
     const [activeModuleId, setActiveModuleId] = useState(null);
+    const [editingLesson, setEditingLesson] = useState(null);
 
     const handleAddModule = () => {
         const newModuleId = modules.length + 1;
         setModules([...modules, {
             id: newModuleId,
-            title: `Module ${newModuleId}`,
+            title: "",
+            description: "",
             lessons: []
         }]);
     };
@@ -33,8 +25,9 @@ export default function CurriculumEditor() {
         setModules(modules.filter(m => m.id !== moduleId));
     };
 
-    const openAddLessonDialog = (moduleId) => {
+    const openAddLessonDialog = (moduleId, lesson = null) => {
         setActiveModuleId(moduleId);
+        setEditingLesson(lesson);
         setIsAddLessonOpen(true);
     };
 
@@ -43,20 +36,43 @@ export default function CurriculumEditor() {
 
         setModules(modules.map(module => {
             if (module.id === activeModuleId) {
-                return {
-                    ...module,
-                    lessons: [
+                const isEditing = !!editingLesson;
+                const updatedLessons = isEditing
+                    ? module.lessons.map(l => l.id === editingLesson.id ? {
+                        ...l,
+                        videoTitle: lessonData.title,
+                        lessonTitle: lessonData.title,
+                        description: lessonData.description,
+                        duration: lessonData.duration || l.duration,
+                        libraryVideo: lessonData.libraryVideo,
+                        videoId: lessonData.libraryVideo?.bunnyVideoId || l.videoId,
+                        libraryId: lessonData.libraryVideo?.bunnyLibraryId || l.libraryId,
+                        lessonDuration: lessonData.libraryVideo?.duration || l.lessonDuration,
+                        resources: lessonData.resources || [],
+                        newResources: lessonData.newResources || [],
+                    } : l)
+                    : [
                         ...module.lessons,
                         {
-                            id: Date.now(), // Temporary ID
-                            title: lessonData.title,
-                            type: 'video', // Main type is video
-                            duration: '0:00', // Placeholder
-                            hasPdf: !!lessonData.pdf,
-                            videoFile: lessonData.video,
-                            pdfFile: lessonData.pdf
+                            id: Date.now(),
+                            videoTitle: lessonData.title,
+                            lessonTitle: lessonData.title,
+                            description: lessonData.description,
+                            type: 'video',
+                            duration: lessonData.duration || 0,
+                            hasResources: lessonData.newResources && lessonData.newResources.length > 0,
+                            resources: [], // Existing resources
+                            newResources: lessonData.newResources || [],
+                            libraryVideo: lessonData.libraryVideo,
+                            videoId: lessonData.libraryVideo?.bunnyVideoId,
+                            libraryId: lessonData.libraryVideo?.bunnyLibraryId,
+                            lessonDuration: lessonData.libraryVideo?.duration || 0,
                         }
-                    ]
+                    ];
+
+                return {
+                    ...module,
+                    lessons: updatedLessons
                 };
             }
             return module;
@@ -94,13 +110,35 @@ export default function CurriculumEditor() {
                 <div className="space-y-4">
                     {modules.map((module, index) => (
                         <div key={module.id} className="border border-slate-200 rounded-xl overflow-hidden">
-                            <div className="bg-slate-50 p-4 flex items-center justify-between cursor-move">
-                                <div className="flex items-center gap-3">
-                                    <GripVertical size={20} className="text-slate-400" />
-                                    <span className="font-bold text-slate-800">Module {index + 1}: {module.title}</span>
+                            <div className="bg-slate-50 p-4 flex items-center justify-between cursor-move border-b border-slate-100">
+                                <div className="flex items-start gap-3 w-full mr-4">
+                                    <GripVertical size={20} className="text-slate-400 mt-2" />
+                                    <div className="space-y-2 w-full">
+                                        <input
+                                            type="text"
+                                            value={module.title}
+                                            onChange={(e) => {
+                                                const newModules = [...modules];
+                                                newModules[index].title = e.target.value;
+                                                setModules(newModules);
+                                            }}
+                                            placeholder={`Module ${index + 1} Title`}
+                                            className="font-bold text-slate-800 bg-transparent border-none outline-none focus:ring-0 p-0 w-full placeholder:text-slate-400"
+                                        />
+                                        <input
+                                            type="text"
+                                            value={module.description || ""}
+                                            onChange={(e) => {
+                                                const newModules = [...modules];
+                                                newModules[index].description = e.target.value;
+                                                setModules(newModules);
+                                            }}
+                                            placeholder="Add module description here..."
+                                            className="text-sm text-slate-500 bg-transparent border-none outline-none focus:ring-0 p-0 w-full placeholder:text-slate-400"
+                                        />
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <button className="p-1.5 hover:bg-slate-200 rounded text-slate-500 cursor-pointer"><Settings size={16} /></button>
                                     <button
                                         className="p-1.5 hover:bg-red-100 rounded text-slate-500 hover:text-red-500 cursor-pointer"
                                         onClick={() => handleDeleteModule(module.id)}
@@ -116,12 +154,20 @@ export default function CurriculumEditor() {
                                     </div>
                                 )}
                                 {module.lessons.map((lesson) => (
-                                    <div key={lesson.id} className="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 group transition-colors">
+                                    <div
+                                        key={lesson.id}
+                                        onClick={() => openAddLessonDialog(module.id, lesson)}
+                                        className="flex items-center justify-between p-3 border border-slate-100 rounded-lg hover:bg-slate-50 group transition-colors cursor-pointer"
+                                    >
                                         <div className="flex items-center gap-3">
                                             <VideoIcon size={16} className="text-blue-500" />
-                                            <span className="text-sm font-medium text-slate-700">{lesson.title}</span>
-                                            {lesson.hasPdf && <FileText size={14} className="text-green-500 ml-2" />}
-                                            {lesson.type === 'pdf' && <FileText size={16} className="text-green-500" />}
+                                            <span className="text-sm font-medium text-slate-700">{lesson.videoTitle || lesson.title}</span>
+                                            {(lesson.hasResources || (lesson.resources && lesson.resources.length > 0)) && (
+                                                <div className="flex items-center gap-1 ml-2 text-green-500">
+                                                    <FileText size={14} />
+                                                    <span className="text-xs">{(lesson.resources?.length || 0) + (lesson.newResources?.length || 0)}</span>
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="flex items-center gap-3">
                                             <span className="text-xs text-slate-400 px-2 py-1 bg-slate-100 rounded group-hover:bg-white">
@@ -153,6 +199,7 @@ export default function CurriculumEditor() {
                 open={isAddLessonOpen}
                 onOpenChange={setIsAddLessonOpen}
                 onSave={handleSaveLesson}
+                lesson={editingLesson}
             />
         </div>
     )

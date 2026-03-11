@@ -5,10 +5,29 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 import { usePathname } from 'next/navigation';
+import { useSelector, useDispatch } from 'react-redux';
+import { useLogoutMutation } from '@/redux/auth/AuthApi';
+import { logOut } from '@/redux/auth/AuthSlice';
+import { useRouter } from 'next/navigation';
 
 export default function NavBar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
+    const user = useSelector((state) => state.auth.user);
+    const [logoutMutation] = useLogoutMutation();
+    const dispatch = useDispatch();
+    const router = useRouter();
+
+    const logoutUser = async () => {
+        try {
+            await logoutMutation().unwrap();
+        } catch (error) {
+            console.error('Logout failed:', error);
+        } finally {
+            dispatch(logOut());
+            router.push('/login');
+        }
+    };
 
     const navItems = [
         { name: 'Home', href: '/' },
@@ -60,15 +79,28 @@ export default function NavBar() {
 
                 {/* Right Actions */}
                 <div className="flex items-center gap-4">
-                    <Link
-                        href="/login"
-                        className="hidden md:flex bg-sSecondary hover:bg-sSecondary/90 text-white px-6 py-2.5 rounded-full font-medium items-center gap-2 transition-colors"
-                    >
-                        Login
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                    </Link>
+                    {user ? (
+                        <div className="hidden md:flex items-center gap-4">
+
+
+                            <Link
+                                href={`/dashboard/${user.role || 'student'}`}
+                                className="bg-sSecondary hover:bg-sSecondary/90 text-white px-5 py-2 rounded-full font-medium transition-colors"
+                            >
+                                Dashboard
+                            </Link>
+                        </div>
+                    ) : (
+                        <Link
+                            href="/login"
+                            className="hidden md:flex bg-sSecondary hover:bg-sSecondary/90 text-white px-6 py-2.5 rounded-full font-medium items-center gap-2 transition-colors"
+                        >
+                            Login
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </Link>
+                    )}
 
                     {/* Mobile Menu Button */}
                     <button
@@ -136,57 +168,83 @@ export default function NavBar() {
                         })}
                     </nav>
 
-                    {/* Login Sections - Fixed at bottom */}
+                    {/* Login/User Sections - Fixed at bottom */}
                     <div className="px-6 py-6 border-t border-gray-100 bg-white space-y-3">
-                        {/* Teacher Login */}
-                        <Link
-                            href="/register/instructor"
-                            className="flex w-full bg-white border-2 border-sPrimary text-sPrimary hover:bg-sPrimary hover:text-white px-5 py-3.5 rounded-xl font-bold items-center justify-between transition-all shadow-sm group"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <span className="flex items-center gap-3">
-                                <GraduationCap size={20} />
-                                Instructor Register
-                            </span>
-                            <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="group-hover:translate-x-1 transition-transform"
-                            >
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </Link>
+                        {user ? (
+                            <>
+                                <div className="mb-4 text-center">
+                                    <p className="text-sm text-slate-500 font-medium">Logged in as</p>
+                                    <p className="text-lg font-bold text-slate-800">{user.firstName || user.name?.split(' ')[0] || 'User'}</p>
+                                </div>
+                                <Link
+                                    href={`/dashboard/${user.role || 'student'}`}
+                                    className="flex w-full bg-sSecondary hover:bg-sSecondary/90 text-white px-5 py-3.5 rounded-xl font-bold items-center justify-center transition-all shadow-md group"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Dashboard
+                                </Link>
 
-                        {/* Student Login */}
-                        <Link
-                            href="/register/student"
-                            className="flex w-full bg-sSecondary hover:bg-sSecondary/90 text-white px-5 py-3.5 rounded-xl font-bold items-center justify-between transition-all shadow-md group"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <span className="flex items-center gap-3">
-                                <User size={20} />
-                                Student Register
-                            </span>
-                            <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="group-hover:translate-x-1 transition-transform"
-                            >
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </Link>
+                            </>
+                        ) : (
+                            <>
+                                {/* Teacher Login */}
+                                <Link
+                                    href="/register/instructor"
+                                    className="flex w-full bg-white border-2 border-sPrimary text-sPrimary hover:bg-sPrimary hover:text-white px-5 py-3.5 rounded-xl font-bold items-center justify-between transition-all shadow-sm group"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    <span className="flex items-center gap-3">
+                                        <GraduationCap size={20} />
+                                        Instructor Register
+                                    </span>
+                                    <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="group-hover:translate-x-1 transition-transform"
+                                    >
+                                        <path d="M5 12h14M12 5l7 7-7 7" />
+                                    </svg>
+                                </Link>
+
+                                {/* Student Login */}
+                                <Link
+                                    href="/register/student"
+                                    className="flex w-full bg-sSecondary hover:bg-sSecondary/90 text-white px-5 py-3.5 rounded-xl font-bold items-center justify-between transition-all shadow-md group"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    <span className="flex items-center gap-3">
+                                        <User size={20} />
+                                        Student Register
+                                    </span>
+                                    <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="group-hover:translate-x-1 transition-transform"
+                                    >
+                                        <path d="M5 12h14M12 5l7 7-7 7" />
+                                    </svg>
+                                </Link>
+                                <Link
+                                    href="/login"
+                                    className="flex mt-2 w-full text-center text-sSecondary hover:underline justify-center font-bold px-5 py-2"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Already have an account? Login
+                                </Link>
+                            </>
+                        )}
 
                         {/* Social Media Icons */}
                         <div className="pt-4 border-t border-gray-100">

@@ -1,7 +1,9 @@
-"use client";
-import React from 'react';
-import { Star, MoreVertical, Eye, BookOpen, List } from 'lucide-react';
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { toast } from 'sonner';
+import DeleteConfirmationModal from '@/app/dashboard/_components/DeleteConfirmationModal';
+import { Star, MoreVertical, Eye, BookOpen, List, Trash2 } from 'lucide-react';
+import { useDeleteCourseMutation } from '@/redux/course/courseApi';
+import Link from 'next/link';
 import {
     Table,
     TableBody,
@@ -10,6 +12,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -20,9 +23,35 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function CoursesTable({ courses }) {
+    const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCourseId, setSelectedCourseId] = useState(null);
+
+    const handleDeleteClick = (courseId) => {
+        setSelectedCourseId(courseId);
+        setIsModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            await deleteCourse(selectedCourseId).unwrap();
+            setIsModalOpen(false);
+            toast.success("Course deleted successfully");
+        } catch (err) {
+            console.error("Deletion failed:", err);
+            toast.error("Failed to delete course: " + (err.data?.message || err.message));
+        }
+    };
+
     return (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex-1">
-            <div className="overflow-x-auto">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-y-auto shadow-sm overflow-hidden flex-1 ">
+            <DeleteConfirmationModal
+                isOpen={isModalOpen}
+                isLoading={isDeleting}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+            />
+            <div className="overflow-x-auto ">
                 <Table>
                     <TableHeader className="bg-slate-50">
                         <TableRow>
@@ -31,7 +60,6 @@ export default function CoursesTable({ courses }) {
                             <TableHead>Performance</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Modules</TableHead>
-                            <TableHead>Revenue</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -39,9 +67,22 @@ export default function CoursesTable({ courses }) {
                         {courses.map((course) => (
                             <TableRow key={course.id} className="hover:bg-slate-50/50 transition-colors">
                                 <TableCell>
-                                    <div>
-                                        <p className="font-bold text-slate-900">{course.title}</p>
-                                        <p className="text-xs text-slate-500">{course.category} • Updated {course.lastUpdated}</p>
+                                    <div className="flex items-center gap-3">
+                                        {course.thumbnail ? (
+                                            <img
+                                                src={course.thumbnail}
+                                                alt={course.title}
+                                                className="size-10 rounded-lg object-cover border border-slate-200 shrink-0"
+                                            />
+                                        ) : (
+                                            <div className="size-10 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 text-blue-500">
+                                                <BookOpen size={18} />
+                                            </div>
+                                        )}
+                                        <div>
+                                            <p className="font-bold text-slate-900">{course.title}</p>
+                                            <p className="text-xs text-slate-500">{course.category} • Updated {course.lastUpdated}</p>
+                                        </div>
                                     </div>
                                 </TableCell>
                                 <TableCell className="font-medium text-slate-700">{course.instructor}</TableCell>
@@ -78,15 +119,16 @@ export default function CoursesTable({ courses }) {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem>
-                                                <Eye className="mr-2 h-4 w-4" /> View Details
+                                            <DropdownMenuItem asChild>
+                                                <Link href={`/dashboard/admin/courses/${course.id}`} className="cursor-pointer">
+                                                    <Eye className="mr-2 h-4 w-4" /> View Details
+                                                </Link>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <BookOpen className="mr-2 h-4 w-4" /> Review Content
-                                            </DropdownMenuItem>
+
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-red-600">
-                                                Suspend Course
+
+                                            <DropdownMenuItem onClick={() => handleDeleteClick(course.id)} className="text-red-600 focus:bg-red-50 focus:text-red-600 cursor-pointer">
+                                                <Trash2 className="mr-2 h-4 w-4" /> Delete Course
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>

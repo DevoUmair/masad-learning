@@ -3,19 +3,37 @@ import { LayoutDashboard, BookOpen, Award, Heart, Calendar, Settings, HelpCircle
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
+import { useDispatch } from 'react-redux';
+import { useLogoutMutation } from '@/redux/auth/AuthApi';
+import { logOut } from '@/redux/auth/AuthSlice';
 
 export function Sidebar({ className, navItems = [] }) {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
 
+    const [logoutMutation] = useLogoutMutation();
+    const dispatch = useDispatch();
+    const router = useRouter();
+
+    const logoutUser = async () => {
+        try {
+            await logoutMutation().unwrap();
+        } catch (error) {
+            console.error('Logout failed:', error);
+        } finally {
+            dispatch(logOut());
+            router.push('/login');
+        }
+    };
+
     // Reusable Sidebar Content
     const SidebarContent = () => (
         <div className="flex flex-col h-full justify-between py-6">
             <div className="flex flex-col gap-8 px-6">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push('/')}>
                     <Image src="/logo/logo2.png" alt="Logo" width={100} height={100} />
                     <div className="flex flex-col -ml-7">
                         <h1 className="text-sPrimary dark:text-white text-xl font-bold leading-tight">Masad</h1>
@@ -65,14 +83,11 @@ export function Sidebar({ className, navItems = [] }) {
             </div>
 
             <div className="px-6 flex flex-col gap-2">
-                <button onClick={() => { window.location.href = "/" }} className="flex items-center gap-3 px-3 py-2.5 text-red-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
+                <button onClick={logoutUser} className="flex items-center gap-3 px-3 py-2.5 text-red-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
                     <LogOut size={20} />
                     <span className="text-sm font-medium">Logout</span>
                 </button>
-                <button className="flex items-center gap-3 px-3 py-2.5 text-sPrimary hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
-                    <Settings2 size={20} />
-                    <span className="text-sm font-medium">Settings</span>
-                </button>
+
             </div>
         </div>
     );

@@ -14,16 +14,18 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function StudentListTable({ students }) {
+    console.log(students);
     return (
         <div className="overflow-x-auto">
             <Table>
                 <TableHeader>
                     <TableRow className="bg-slate-50 hover:bg-slate-50 border-b border-slate-100">
                         <TableHead className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Student</TableHead>
-                        <TableHead className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Course</TableHead>
+                        <TableHead className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Courses Enrolled</TableHead>
                         <TableHead className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[25%]">Progress</TableHead>
                         <TableHead className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Joined</TableHead>
                         <TableHead className="text-left py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Last Active</TableHead>
+                        <TableHead className="text-right py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Action</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-slate-100">
@@ -46,7 +48,7 @@ export default function StudentListTable({ students }) {
                                 </div>
                             </TableCell>
                             <TableCell className="py-4 px-6">
-                                <div className="text-sm font-medium text-slate-700">{student.course}</div>
+                                <div className="text-sm font-medium text-slate-700">{student.coursesEnrolled}</div>
                             </TableCell>
                             <TableCell className="py-4 px-6">
                                 <div className="space-y-1.5">
@@ -74,6 +76,11 @@ export default function StudentListTable({ students }) {
                                     <div className={`size-2 rounded-full ${student.lastActive === 'Just now' ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}`} />
                                     {student.lastActive}
                                 </div>
+                            </TableCell>
+                            <TableCell className="py-4 px-6 text-right">
+                                <Link href={`/dashboard/instructor/students/${student.studentId}`} className="inline-flex items-center justify-center rounded-lg bg-sPrimary/10 px-3 py-1.5 text-xs font-bold text-sPrimary hover:bg-sPrimary hover:text-white transition-all relative z-20">
+                                    View Detail
+                                </Link>
                             </TableCell>
                         </TableRow>
                     ))}

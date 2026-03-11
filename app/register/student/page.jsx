@@ -1,11 +1,70 @@
+'use client';
 
 import AuthSplitLayout from '@/layouts/AuthSplitLayout';
 import RegisterTabs from '@/components/custom/RegisterTabs';
 import Link from 'next/link';
 import { Mail, Lock, User, Phone } from 'lucide-react';
 import NavBar from '@/app/_components/NavBar';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useRegisterMutation } from '@/redux/auth/AuthApi';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '@/redux/auth/AuthSlice';
+import { toast } from 'sonner';
 
 export default function StudentRegisterPage() {
+    const router = useRouter();
+    const [registerUser] = useRegisterMutation();
+    const dispatch = useDispatch();
+
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        password: '',
+        terms: false
+    });
+    const [error, setError] = useState(null);
+
+    const handleChange = (e) => {
+        const { id, value, type, checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [id]: type === 'checkbox' ? checked : value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError(null);
+
+        if (!formData.terms) {
+            const message = 'You must agree to the Terms of Service and Privacy Policy.';
+            setError(message);
+            toast.error(message);
+            return;
+        }
+
+        try {
+            const data = await registerUser({
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                phone: formData.phone,
+                password: formData.password,
+                role: 'student'
+            }).unwrap();
+            dispatch(setCredentials({ user: data.user, accessToken: data.accessToken }));
+            toast.success('Account created! Welcome to Masad Learning.');
+            router.push('/dashboard/student');
+        } catch (err) {
+            const message = err.data?.message || 'Registration failed';
+            setError(message);
+            toast.error(message);
+        }
+    };
+
     return (
         <>
             <NavBar />
@@ -19,7 +78,13 @@ export default function StudentRegisterPage() {
                     <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Create Account</h2>
                     <p className="text-gray-500 mb-8">Please fill in your details to get started.</p>
 
-                    <form className="space-y-4">
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    <form className="space-y-4" onSubmit={handleSubmit}>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label htmlFor="firstName" className="block text-sm font-bold text-gray-700 mb-2">First Name</label>
@@ -30,6 +95,9 @@ export default function StudentRegisterPage() {
                                     <input
                                         type="text"
                                         id="firstName"
+                                        value={formData.firstName}
+                                        onChange={handleChange}
+                                        required
                                         className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                         placeholder="John"
                                     />
@@ -44,6 +112,9 @@ export default function StudentRegisterPage() {
                                     <input
                                         type="text"
                                         id="lastName"
+                                        value={formData.lastName}
+                                        onChange={handleChange}
+                                        required
                                         className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                         placeholder="Doe"
                                     />
@@ -60,6 +131,9 @@ export default function StudentRegisterPage() {
                                 <input
                                     type="email"
                                     id="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
                                     className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                     placeholder="name@example.com"
                                 />
@@ -75,6 +149,8 @@ export default function StudentRegisterPage() {
                                 <input
                                     type="tel"
                                     id="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
                                     className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                     placeholder="+971 50 123 4567"
                                 />
@@ -90,6 +166,9 @@ export default function StudentRegisterPage() {
                                 <input
                                     type="password"
                                     id="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
                                     className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-sSecondary focus:border-sSecondary shadow-sm transition-colors text-black placeholder:text-gray-400"
                                     placeholder="••••••••"
                                 />
@@ -99,8 +178,9 @@ export default function StudentRegisterPage() {
                         <div className="flex items-center">
                             <input
                                 id="terms"
-                                name="terms"
                                 type="checkbox"
+                                checked={formData.terms}
+                                onChange={handleChange}
                                 className="h-4 w-4 text-sSecondary focus:ring-sSecondary border-gray-300 rounded"
                             />
                             <label htmlFor="terms" className="ml-2 block text-sm text-gray-900">
@@ -128,6 +208,5 @@ export default function StudentRegisterPage() {
                 </div>
             </AuthSplitLayout>
         </>
-
     );
 }
